@@ -4,25 +4,18 @@ Solar Radiation Prediction with scikit's linear regression
 
 import os
 
-from sklearn.model_selection import KFold, GridSearchCV, cross_val_score
+from sklearn.model_selection import cross_val_score
 from sklearn.externals import joblib
 
 from apollo.datasets import simple_loader
 
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import linear_model
-from sklearn.metrics import mean_squared_error, r2_score
+
 
 _CACHE_DIR = "../data"  # where the NAM and GA-POWER data resides
 _MODELS_DIR = "../models"  # directory where serialized models will be saved
 _DEFAULT_TARGET = 'UGA-C-POA-1-IRR'
-
-# hyperparameters used during training, evaluation, and prediction
-HYPERPARAMS = {
-   'normalize': True,
-
-}
 
 
 def make_model_name(target_hour, target_var):
@@ -30,7 +23,6 @@ def make_model_name(target_hour, target_var):
     return 'linreg_%shr_%s.model' % (target_hour, target_var)
 
 
-# TODO: export these functions to a utils module
 def save(model, save_dir, target_hour, target_var):
     # logic to serialize a trained model
     name = make_model_name(target_hour, target_var)
@@ -56,30 +48,9 @@ def train(begin_date='2017-01-01 00:00', end_date='2017-12-31 18:00', target_hou
           cache_dir=_CACHE_DIR, save_dir=_MODELS_DIR, tune=True, num_folds=3):
     # logic to train the model using the full dataset
     X, y = simple_loader.load(start=begin_date, stop=end_date, target_hour=target_hour, target_var=target_var, cache_dir=cache_dir)
-    if tune:
-        model = GridSearchCV(
-            estimator=linear_model.LinearRegression(),
-            param_grid={
-                'splitter': ['best', 'random'],  # splitting criterion
-                'max_depth': [None, 10, 20, 50, 100],  # Maximum depth of the tree. None means unbounded.
-                'min_impurity_decrease': np.arange(0, 0.6, 0.05)
-            },
-            cv=KFold(n_splits=num_folds, shuffle=True),
-            scoring='mean_squared_error',
-            return_train_score=False,
-            n_jobs=-1,
-        )
-    else:
-        model = linear_model.LinearRegression()
+    model = linear_model.LinearRegression()
     model = model.fit(X, y)
     save_location = save(model, save_dir, target_hour, target_var)
-    plt.scatter(X, y, color='black')
-    plt.plot(X, y, color='blue', linewidth=3)
-
-    plt.xticks(())
-    plt.yticks(())
-
-    plt.show()
 
     return save_location
 
