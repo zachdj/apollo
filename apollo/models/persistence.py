@@ -73,16 +73,17 @@ class PersistenceModel(ValidatableModel):
         pass
 
     def forecast(self, reftime):
+        reftime = pd.Timestamp(reftime)
         forecast_reach = max(*self.data_kwargs['target_hours'])  # maximum forecast hour
-        past_values_start = pd.Timestamp(reftime) - pd.Timedelta(forecast_reach, 'h')
-        past_values_end = pd.Timestamp(reftime)
-        past_values = open_sqlite(self.data_kwargs['target'], start=past_values_start, stop=past_values_end)
+        past_values_start = reftime - pd.Timedelta(forecast_reach, 'h')
+        past_values_end = reftime
+        past_values = open_sqlite(self.data_kwargs['target'], start=past_values_start, stop=past_values_end).to_dataframe()
 
         index = [reftime + pd.Timedelta(1, 'h') * n for n in self.data_kwargs['target_hours']]
         predictions = []
         for timestamp in index:
             past_timestamp = timestamp - pd.Timedelta(24, 'h')
-            past_val = past_values[past_timestamp]
+            past_val = past_values.loc[past_timestamp]
             predictions.append(past_val)
 
         df = pd.DataFrame(predictions, index=pd.DatetimeIndex(index), columns=[self.data_kwargs['target']])
