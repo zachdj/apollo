@@ -121,3 +121,6 @@ ENV/
 
 # dask files
 dask-worker-space
+
+# experimental results
+results/
