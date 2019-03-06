@@ -83,7 +83,10 @@ class PersistenceModel(ValidatableModel):
         predictions = []
         for timestamp in index:
             past_timestamp = timestamp - pd.Timedelta(24, 'h')
-            past_val = past_values.loc[past_timestamp]
+            if past_timestamp in past_values.index.values:
+                past_val = past_values.loc[past_timestamp]
+            else:
+                past_val = 0
             predictions.append(past_val)
 
         df = pd.DataFrame(predictions, index=pd.DatetimeIndex(index), columns=[self.data_kwargs['target']])
