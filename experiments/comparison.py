@@ -8,13 +8,6 @@ from apollo.models.base import list_known_models
 from apollo.validation import cross_validate, split_validate
 from experiments.util import is_abstract
 
-'''
-TODOs:
-- refactor to use model NAMES
-- refactor to use metric NAMES
-- better argument parsing
-'''
-
 
 def get_model_classes(model_names):
     classes = []
