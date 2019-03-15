@@ -1,8 +1,29 @@
 # CLI for convenient experiment-running
 
 import argparse
+import json
+import logging.config
+import os
 
 from experiments.comparison import run as run_comparison
+
+
+def setup_logging(
+    default_path='logging.json',
+    default_level=logging.INFO,
+    env_key='LOG_CFG'
+):
+    """ Setup logging configuration """
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
 
 
 def parse_kwarg_list(kwarg_list):
@@ -37,6 +58,7 @@ EXPERIMENTS = {
 
 
 def main():
+    setup_logging()
     parser = argparse.ArgumentParser(
         description='Apollo Experiment Runner',
         argument_default=argparse.SUPPRESS,
