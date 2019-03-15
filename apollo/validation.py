@@ -1,6 +1,8 @@
+import logging
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import TimeSeriesSplit
+import time
 
 import apollo.datasets.ga_power as ga_power
 from apollo.models.base import ValidatableModel
@@ -28,6 +30,8 @@ def cross_validate(model, first, last, metrics=(mean_absolute_error,), k=3):
 
     assert isinstance(model, ValidatableModel)
 
+    logger = logging.getLogger(__name__)
+
     # records has the following structure, where the key is the forecast hour
     # {
     #     1: {
@@ -46,18 +50,29 @@ def cross_validate(model, first, last, metrics=(mean_absolute_error,), k=3):
     last = pd.Timestamp(last).round(freq='6h')
     reftimes = pd.date_range(first, last, freq='6h')
 
+    logger.info(f'Evaluating model {model.name} of type {model.__class__.__name__} using {k}-fold timeseries'
+                f'cross-validation. \nStart time: {first}, End time: {last}')
+
     true_values = ga_power.open_sqlite(model.target, start=first, stop=(last + pd.Timedelta(48, 'h'))).to_dataframe()
     true_values.rename(columns={true_values.columns[0]: 'true_val'}, inplace=True)
+    logger.debug('Loaded ground truth irradiance readings.')
 
     time_series_splitter = TimeSeriesSplit(n_splits=k)
 
+    fold = 0
     for train_index, test_index in time_series_splitter.split(reftimes):
+        fold += 1
+        start = time.time()
+
+        logger.debug(f'Fold {fold}...')
         train_reftimes = reftimes[train_index]
         test_reftimes = reftimes[test_index]
 
+        logger.debug(f'Training model for period ({train_reftimes[0]}) to ({train_reftimes[-1]})')
         # train the model using the training set
         model.fit(train_reftimes[0], train_reftimes[-1])
 
+        logger.debug(f'Making predictions for period ({test_reftimes[0]}) to ({test_reftimes[-1]})')
         # make predictions for each reftime in the testing set, and record the results
         for reftime in test_reftimes:
             predictions = model.forecast(reftime)
@@ -75,7 +90,10 @@ def cross_validate(model, first, last, metrics=(mean_absolute_error,), k=3):
                 records[hour]['y_pred'].append(vals['predicted'])
                 records[hour]['y_true'].append(vals['true_val'])
 
+        logger.debug(f'Fold {fold} completed after {time.time() - start} s')
+
     # compute error using each of the metrics
+    logger.debug('Computing error for each metric and each target hour')
     results = pd.DataFrame(index=model.target_hours, columns=[metric.__name__ for metric in metrics])
     for hour in records:
         y_true, y_pred = records[hour]['y_true'], records[hour]['y_pred']
@@ -83,6 +101,7 @@ def cross_validate(model, first, last, metrics=(mean_absolute_error,), k=3):
             error = metric(y_true, y_pred)
             results.loc[hour, metric.__name__] = error
 
+    logger.debug('Cross-validation completed.')
     return results
 
 
@@ -109,6 +128,8 @@ def split_validate(model, first, last, metrics=(mean_absolute_error,), test_size
 
     assert isinstance(model, ValidatableModel)
 
+    logger = logging.getLogger(__name__)
+
     # records has the following structure, where the key is the forecast hour
     # {
     #     1: {
@@ -127,6 +148,9 @@ def split_validate(model, first, last, metrics=(mean_absolute_error,), test_size
     last = pd.Timestamp(last).round(freq='6h')
     reftimes = pd.date_range(first, last, freq='6h')
 
+    logger.info(f'Evaluating model {model.name} of type {model.__class__.__name__} using train-test split validation. '
+                f'\nStart time: {first}, End time: {last} \nTest portion: {test_size}')
+
     true_values = ga_power.open_sqlite(model.target, start=first, stop=(last + pd.Timedelta(48, 'h'))).to_dataframe()
     true_values.rename(columns={true_values.columns[0]: 'true_val'}, inplace=True)
 
@@ -135,8 +159,13 @@ def split_validate(model, first, last, metrics=(mean_absolute_error,), test_size
     test_reftimes = reftimes[split_index:].tolist()
 
     # train the model using the training set
+    training_start_time = time.time()
+    logger.debug(f'Training model for period ({train_reftimes[0]}) to ({train_reftimes[-1]})...')
     model.fit(train_reftimes[0], train_reftimes[-1])
+    logger.debug(f'Training concluded after {time.time() - training_start_time}s')
 
+    logger.debug(f'Evaluating model on period ({test_reftimes[0]}) to ({test_reftimes[-1]})')
+    testing_start_time = time.time()
     # make predictions for each reftime in the testing set
     for reftime in test_reftimes:
         predictions = model.forecast(reftime)
@@ -154,7 +183,10 @@ def split_validate(model, first, last, metrics=(mean_absolute_error,), test_size
             records[hour]['y_pred'].append(vals['predicted'])
             records[hour]['y_true'].append(vals['true_val'])
 
+    logger.debug(f'Testing concluded after {time.time() - testing_start_time}s')
+
     # compute error using each of the metrics
+    logger.debug('Computing error for each metric and each target hour')
     results = pd.DataFrame(index=model.target_hours, columns=[metric.__name__ for metric in metrics])
     for hour in records:
         y_true, y_pred = records[hour]['y_true'], records[hour]['y_pred']
@@ -162,4 +194,5 @@ def split_validate(model, first, last, metrics=(mean_absolute_error,), test_size
             error = metric(y_true, y_pred)
             results.loc[hour, metric.__name__] = error
 
+    logger.debug('Evaluation completed.')
     return results
