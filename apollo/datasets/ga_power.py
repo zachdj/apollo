@@ -12,6 +12,7 @@ from pathlib import Path
 import pandas as pd
 import xarray as xr
 import sqlite3
+import time
 
 import apollo.storage
 
@@ -168,6 +169,8 @@ def open_sqlite(*cols, start, stop):
     connection = sqlite3.connect(str(path))
 
     start, stop = pd.Timestamp(start), pd.Timestamp(stop)
+    logger.debug(f'Loading targets from SQLite db between {start} and {stop}')
+    start_time = time.time()
 
     # convert start and stop timestamps to unix epoch in seconds
     unix_start = start.value // 10**9
@@ -196,6 +199,8 @@ def open_sqlite(*cols, start, stop):
 
     # most of apollo assumes the index name will be `reftime`
     df.index.name = 'reftime'
+
+    logger.debug(f'Loaded SQLite targets after {time.time() - start_time}s')
 
     # In apollo, all datasets should be presented as xarray
     df = df.to_xarray()
