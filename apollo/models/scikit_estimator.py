@@ -1,4 +1,5 @@
 import abc
+import logging
 import numpy as np
 import pandas as pd
 import pathlib
@@ -9,6 +10,9 @@ from sklearn.multioutput import MultiOutputRegressor
 
 from apollo.datasets.solar import SolarDataset
 from apollo.models.base import ValidatableModel
+
+# Module-level logger
+logger = logging.getLogger(__name__)
 
 
 class ScikitModel(ValidatableModel, abc.ABC):

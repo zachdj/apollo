@@ -559,12 +559,14 @@ class NamLoader:
             CacheMiss:
                 An exception is raised if the forecast does not exist locally.
         '''
+        logger.debug(f'Opening local NAM data for reftime {reftime}')
         path = self.nc_path(reftime)
         if path.exists():
             logger.info(f'reading {path}')
             ds = xr.open_dataset(path, chunks={})
             return ds
         else:
+            logger.warning(f'NAM CacheMiss for reftime {reftime}')
             raise CacheMiss(reftime)
 
     def open(self, *reftimes):
@@ -618,6 +620,8 @@ class NamLoader:
         start = pd.Timestamp(start).floor('6h')
         stop = pd.Timestamp(stop).floor('6h')
 
+        logger.debug(f'Opening NAM data between {start} and {stop}')
+
         datasets = []
         delta = pd.Timedelta(6, 'h')
         while start < stop:
@@ -651,6 +655,7 @@ class NamLoader:
         '''
         # Check for spurious coordinates that should be ignored.
         # This is due to a regression: #53
+        logger.debug(f'Combining {len(datasets)} datasets...')
         k = set(datasets[0].coords.keys())
         coords = (set(ds.coords.keys()) for ds in datasets)
         coords = (c ^ k for c in coords)
