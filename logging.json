@@ -39,7 +39,7 @@
     "loggers": {
         "": {
             "level": "INFO",
-            "handlers": ["default"],
+            "handlers": ["console"],
             "propagate": true
         }
     },
