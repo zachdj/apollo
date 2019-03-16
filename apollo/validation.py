@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import TimeSeriesSplit
+import sys
 import time
 
 import apollo.datasets.ga_power as ga_power
@@ -75,20 +76,27 @@ def cross_validate(model, first, last, metrics=(mean_absolute_error,), k=3):
         logger.debug(f'Making predictions for period ({test_reftimes[0]}) to ({test_reftimes[-1]})')
         # make predictions for each reftime in the testing set, and record the results
         for reftime in test_reftimes:
-            predictions = model.forecast(reftime)
-            # predictions will be a DataFrame of (reftime, target) pairs for each target hour
-            predictions.rename(columns={predictions.columns[0]: 'predicted'}, inplace=True)
+            try:
+                predictions = model.forecast(reftime)
+                # predictions will be a DataFrame of (reftime, target) pairs for each target hour
+                predictions.rename(columns={predictions.columns[0]: 'predicted'}, inplace=True)
 
-            # match true values and find difference
-            matched = pd.concat([predictions, true_values], axis=1, join='inner')
+                # match true values and find difference
+                matched = pd.concat([predictions, true_values], axis=1, join='inner')
 
-            for timestamp, vals in matched.iterrows():
-                hour = (timestamp - reftime) // pd.Timedelta(1, 'h')
-                if not hour in records:
-                    records[hour] = {'y_true': list(), 'y_pred': list()}
+                for timestamp, vals in matched.iterrows():
+                    hour = (timestamp - reftime) // pd.Timedelta(1, 'h')
+                    if not hour in records:
+                        records[hour] = {'y_true': list(), 'y_pred': list()}
 
-                records[hour]['y_pred'].append(vals['predicted'])
-                records[hour]['y_true'].append(vals['true_val'])
+                    records[hour]['y_pred'].append(vals['predicted'])
+                    records[hour]['y_true'].append(vals['true_val'])
+
+            # if anything goes wrong, omit the results from the error estimation
+            except:
+                logger.warning(f'Unexpected error generating forecast for reftime {reftime}')
+                logger.error(sys.exc_info()[0])
+                pass
 
         logger.debug(f'Fold {fold} completed after {time.time() - start} s')
 
@@ -168,20 +176,27 @@ def split_validate(model, first, last, metrics=(mean_absolute_error,), test_size
     testing_start_time = time.time()
     # make predictions for each reftime in the testing set
     for reftime in test_reftimes:
-        predictions = model.forecast(reftime)
-        # predictions will be a DataFrame of (reftime, target) pairs for each target hour
-        predictions.rename(columns={predictions.columns[0]: 'predicted'}, inplace=True)
+        # try to make predictions for the reftime
+        try:
+            predictions = model.forecast(reftime)
+            # predictions will be a DataFrame of (reftime, target) pairs for each target hour
+            predictions.rename(columns={predictions.columns[0]: 'predicted'}, inplace=True)
 
-        # match true values and find difference
-        matched = pd.concat([predictions, true_values], axis=1, join='inner')
+            # match true values and find difference
+            matched = pd.concat([predictions, true_values], axis=1, join='inner')
 
-        for timestamp, vals in matched.iterrows():
-            hour = (timestamp - reftime) // pd.Timedelta(1, 'h')
-            if not hour in records:
-                records[hour] = {'y_true': list(), 'y_pred': list()}
+            for timestamp, vals in matched.iterrows():
+                hour = (timestamp - reftime) // pd.Timedelta(1, 'h')
+                if not hour in records:
+                    records[hour] = {'y_true': list(), 'y_pred': list()}
 
-            records[hour]['y_pred'].append(vals['predicted'])
-            records[hour]['y_true'].append(vals['true_val'])
+                records[hour]['y_pred'].append(vals['predicted'])
+                records[hour]['y_true'].append(vals['true_val'])
+        # if anything goes wrong, omit the results from the error estimation
+        except:
+            logger.warning(f'Unexpected error generating forecast for reftime {reftime}')
+            logger.error(sys.exc_info()[0])
+            pass
 
     logger.debug(f'Testing concluded after {time.time() - testing_start_time}s')
 
