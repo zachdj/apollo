@@ -6,6 +6,7 @@ import logging.config
 import os
 
 from experiments.comparison import run as run_comparison
+from experiments.figures import run as generate_figures
 
 
 def setup_logging(
@@ -54,6 +55,7 @@ def parse_kwarg_list(kwarg_list):
 EXPERIMENTS = {
     'test': lambda: print('Ran test'),
     'comparison': run_comparison,
+    'figures': generate_figures
 }
 
 
