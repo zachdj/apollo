@@ -155,7 +155,7 @@ def _irr_correlations(start, stop, output):
     axes.scatter(x, array_e, color='b', label='Array E')
 
     axes.set_title('Irradiance at 2PM EST vs. Surface Air Temperature')
-    axes.set_xlabel('Air Tempurature (degrees Celsius)')
+    axes.set_xlabel('Air Tempurature (Kelvin)')
     axes.set_ylabel('Irradiance (watts / m$^2$)')
     axes.legend()
 
