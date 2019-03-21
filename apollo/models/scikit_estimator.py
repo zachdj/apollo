@@ -8,15 +8,14 @@ import pickle
 from sklearn.externals import joblib
 from sklearn.multioutput import MultiOutputRegressor
 
-from apollo.datasets.solar import SolarDataset
-from apollo.models.base import ValidatableModel
+from apollo.datasets.solar import SolarDataset, PLANAR_FEATURES, ATHENS_LATLON
+from apollo.models.base import Model
 
 # Module-level logger
 logger = logging.getLogger(__name__)
 
-
-class ScikitModel(ValidatableModel, abc.ABC):
-    ''' Abstract base class for models that use estimators conforming to the scikit-learn API
+class ScikitModel(Model, abc.ABC):
+    ''' Abstract base class for models using estimators from the sklearn API
     '''
     def __init__(self, name=None, **kwargs):
         ''' Initialize a ScikitModel
@@ -32,7 +31,12 @@ class ScikitModel(ValidatableModel, abc.ABC):
         ts = pd.Timestamp('now')
         # grab kwargs used to load data
         self.data_kwargs = {
+            'feature_subset': PLANAR_FEATURES,
+            'temporal_features': True,
+            'center': ATHENS_LATLON,
+            'geo_shape': (3, 3),
             'lag': 0,
+            'forecast': 36,
             'target': 'UGABPOA1IRR',
             'target_hours': tuple(np.arange(1, 25)),
             'standardize': True
@@ -88,7 +92,8 @@ class ScikitModel(ValidatableModel, abc.ABC):
 
     def save(self, path):
         if not self.model:
-            raise ValueError('Model has not been trained.  Ensure `model.fit` is called before `model.save`.')
+            raise ValueError('Model has not been trained. Ensure `model.fit` '
+                             'is called before `model.save`.')
 
         # serialize the trained scikit-learn model
         joblib.dump(self.model, path / 'regressor.joblib')
@@ -125,6 +130,8 @@ class ScikitModel(ValidatableModel, abc.ABC):
         x = np.asarray(x)
 
         y = self.model.predict(x)[0]
-        index = [reftime + pd.Timedelta(1, 'h') * n for n in data_kwargs['target_hours']]
-        df = pd.DataFrame(y, index=pd.DatetimeIndex(index), columns=[self.data_kwargs['target']])
+        index = [reftime + pd.Timedelta(1, 'h') * n
+                 for n in data_kwargs['target_hours']]
+        df = pd.DataFrame(y, index=pd.DatetimeIndex(index),
+                          columns=[self.data_kwargs['target']])
         return df
