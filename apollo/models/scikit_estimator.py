@@ -15,7 +15,7 @@ from apollo.models.base import Model
 logger = logging.getLogger(__name__)
 
 class ScikitModel(Model, abc.ABC):
-    ''' Abstract base class for models using estimators from the sklearn API
+    ''' Abstract base class for models that use scikit-learn estimators
     '''
     def __init__(self, name=None, **kwargs):
         ''' Initialize a ScikitModel
@@ -92,8 +92,8 @@ class ScikitModel(Model, abc.ABC):
 
     def save(self, path):
         if not self.model:
-            raise ValueError('Model has not been trained. Ensure `model.fit` '
-                             'is called before `model.save`.')
+            raise ValueError('Model has not been trained. Ensure `model.fit`'
+                             ' is called before `model.save`.')
 
         # serialize the trained scikit-learn model
         joblib.dump(self.model, path / 'regressor.joblib')
