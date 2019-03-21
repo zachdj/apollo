@@ -24,7 +24,8 @@ _default_models = tuple([model.__name__ for model in list_known_models() if not 
 def run(models=_default_models,
         targets=('UGAAPOA1IRR','UGABPOA1IRR','UGAEPOA1IRR',),
         metrics=('MAE', 'MSE', 'RMSE', 'R2'),
-        start='2017-01-01', end='2018-12-31', method='cv', folds=5, split=0.5, output='./results'):
+        start='2017-01-01', end='2018-12-31',
+        method='cv', folds=5, split=0.5, output='./results'):
 
     print('Comparison Experiment')
     model_classes = get_model_classes(models)
