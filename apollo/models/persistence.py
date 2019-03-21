@@ -5,10 +5,10 @@ import pathlib
 import pickle
 
 from apollo.datasets.ga_power import open_sqlite
-from apollo.models.base import ValidatableModel
+from apollo.models.base import Model
 
 
-class PersistenceModel(ValidatableModel):
+class PersistenceModel(Model):
     ''' Predicts solar irradiance at time T using the irradiance reading at time (T - 24 hours) '''
     def __init__(self, data_kwargs=None, model_kwargs=None, **kwargs):
         ''' Initialize a PersistanceModel
