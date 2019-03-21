@@ -7,6 +7,7 @@ import os
 
 from experiments.comparison import run as run_comparison
 from experiments.figures import run as generate_figures
+from experiments.grid_expansion import run as run_grid_expansion
 
 
 def setup_logging(
@@ -55,7 +56,8 @@ def parse_kwarg_list(kwarg_list):
 EXPERIMENTS = {
     'test': lambda: print('Ran test'),
     'comparison': run_comparison,
-    'figures': generate_figures
+    'figures': generate_figures,
+    'grid': run_grid_expansion
 }
 
 
@@ -66,12 +68,15 @@ def main():
         argument_default=argparse.SUPPRESS,
     )
     # specify the experiment to run
-    parser.add_argument('experiment', type=str, choices=list(EXPERIMENTS.keys()),
+    parser.add_argument('experiment',
+                        type=str, choices=list(EXPERIMENTS.keys()),
                         help='The experiment that you would like to run.')
 
-    parser.add_argument('--kwargs', type=str, nargs='*',
+    parser.add_argument('--kwargs',
+                        type=str, nargs='*',
                         help='Keyword arguments to pass to the experiment runner'
-                             'Should be formatted like "--kwargs arg1=val1 arg2=val2 . . ."')
+                             'Should be formatted like '
+                             '"--kwargs arg1=val1 arg2=val2 . . ."')
     # parse args
     args = parser.parse_args()
     args = vars(args)
