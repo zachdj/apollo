@@ -5,13 +5,15 @@ import pathlib
 import pickle
 
 from apollo.datasets.ga_power import open_sqlite
+from apollo.datasets.solar import DEFAULT_TARGET, DEFAULT_TARGET_HOURS
 from apollo.models.base import Model
 
 
 class PersistenceModel(Model):
-    ''' Predicts solar irradiance at time T using the irradiance reading at time (T - 24 hours) '''
-    def __init__(self, data_kwargs=None, model_kwargs=None, **kwargs):
-        ''' Initialize a PersistanceModel
+    ''' Predicts solar irradiance at time using the reading from 24 hours prior
+    '''
+    def __init__(self, name=None, **kwargs):
+        ''' Initialize a PersistenceModel
 
         Args:
             data_kwargs (dict or None):
@@ -22,22 +24,11 @@ class PersistenceModel(Model):
                 other kwargs used for model initialization, such as model name
         '''
         ts = pd.Timestamp('now')
-        data_kwargs = data_kwargs or {}
-        default_data_kwargs = {
-            'lag': 0,
-            'target': 'UGABPOA1IRR',
-            'target_hours': tuple(np.arange(1, 25)),
-            'standardize': True
-        }
-        # self.data_kwargs will be a merged dictionary with values from `data_kwargs` replacing default values
-        self.data_kwargs = {**default_data_kwargs, **data_kwargs}
-
-        self.model_kwargs = model_kwargs or {}
 
         self.kwargs = kwargs
-        self._name = f'PersistenceModel@{ts.isoformat()}'
-        if 'name' in kwargs:
-            self._name = kwargs['name']
+        self.data_args = kwargs
+        self._name = f'PersistenceModel@{ts.isoformat()}' if name is None \
+            else name
 
     @property
     def name(self):
@@ -45,27 +36,34 @@ class PersistenceModel(Model):
 
     @property
     def target(self):
-        return self.data_kwargs['target']
+        return self.data_args['target'] \
+            if 'target' in self.data_args \
+            else DEFAULT_TARGET
 
     @property
     def target_hours(self):
-        return tuple(self.data_kwargs['target_hours'])
+        if 'target_hours' in self.data_args:
+            try:
+                return tuple(self.data_args['target_hours'])
+            except TypeError:
+                return self.data_args['target_hours'],
+        else:
+            try:
+                return tuple(DEFAULT_TARGET_HOURS)
+            except TypeError:
+                return DEFAULT_TARGET_HOURS,
 
     @classmethod
     def load(cls, path):
         name = path.name
-        with open(path / 'data_args.pickle', 'rb') as data_args_file:
-            data_kwargs = pickle.load(data_args_file)
         with open(path / 'kwargs.pickle', 'rb') as kwargs_file:
             kwargs = pickle.load(kwargs_file)
-        model = cls(name=name, data_kwargs=data_kwargs, model_kwargs=None, **kwargs)
+        model = cls(name=name, **kwargs)
 
         return model
 
     def save(self, path):
         # serialize kwargs
-        with open(path / 'data_args.pickle', 'wb') as outfile:
-            pickle.dump(self.data_kwargs, outfile)
         with open(path / 'kwargs.pickle', 'wb') as outfile:
             pickle.dump(self.kwargs, outfile)
 
@@ -74,12 +72,14 @@ class PersistenceModel(Model):
 
     def forecast(self, reftime):
         reftime = pd.Timestamp(reftime)
-        forecast_reach = max(*self.data_kwargs['target_hours'])  # maximum forecast hour
+        forecast_reach = max(*self.target_hours)  # maximum forecast hour
         past_values_start = reftime - pd.Timedelta(forecast_reach, 'h')
         past_values_end = reftime
-        past_values = open_sqlite(self.data_kwargs['target'], start=past_values_start, stop=past_values_end).to_dataframe()
+        past_values = open_sqlite(
+            self.target, start=past_values_start, stop=past_values_end)\
+            .to_dataframe()
 
-        index = [reftime + pd.Timedelta(1, 'h') * n for n in self.data_kwargs['target_hours']]
+        index = [reftime + pd.Timedelta(1, 'h') * n for n in self.target_hours]
         predictions = []
         for timestamp in index:
             past_timestamp = timestamp - pd.Timedelta(24, 'h')
@@ -89,5 +89,6 @@ class PersistenceModel(Model):
                 past_val = 0
             predictions.append(past_val)
 
-        df = pd.DataFrame(predictions, index=pd.DatetimeIndex(index), columns=[self.data_kwargs['target']])
+        df = pd.DataFrame(
+            predictions, index=pd.DatetimeIndex(index), columns=[self.target])
         return df
