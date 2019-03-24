@@ -122,18 +122,14 @@ class Model(abc.ABC):
         Args:
             first (str or Timestamp):
                 The first reftime in the testing set.
-
             last (str or Timestamp):
                 The last reftime in the testing set.
-
             splitter (object):
                 An object implementing a `split` method, that returns training
                 and testing indicies.
-
             metrics (Iterable[Callable]):
                 Set of evaluation metrics to apply.  Each metric should have
                 a signature `metric_name(y_true, y_predicted)`.
-
             **kwargs:
                 Additional parameters to be passed to each metric.
 
@@ -152,13 +148,13 @@ class Model(abc.ABC):
         targets_last = last + pd.Timedelta(max_target_hour+1, 'h')
 
         # pre-load all ground truth readings
-        true_vals = ga_power.open_sqlite(
+        ground_truth = ga_power.open_sqlite(
             self.target,
             start=first,
             stop=targets_last).to_dataframe()
 
-        true_vals.rename(
-            columns={true_vals.columns[0]: 'true_val'},
+        ground_truth.rename(
+            columns={ground_truth.columns[0]: 'true_val'},
             inplace=True)
 
         evaluations = {metric.__name__: [] for metric in metrics}
@@ -181,14 +177,23 @@ class Model(abc.ABC):
                         inplace=True)
 
                     # match predictions with ground truth
-                    matched = pd.concat([predictions, true_vals],
+                    matched = pd.concat([predictions, ground_truth],
                                         axis=1, join='inner')
 
-                    y_true.append(matched['true_val'].values)
-                    y_pred.append(matched['predicted'].values)
+                    true_vals = matched['true_val'].values
+                    pred_vals = matched['predicted'].values
+                    assert(len(true_vals) == len(self.target_hours))
+                    assert(len(pred_vals) == len(self.target_hours))
+                    y_true.append(true_vals)
+                    y_pred.append(pred_vals)
 
                 # if data unavailable, omit the results from error estimation
                 except CacheMiss:
+                    logger.warning(f'Omitting results for reftime {reftime}')
+                    pass
+
+                # if some of the target hours were missing
+                except AssertionError:
                     logger.warning(f'Omitting results for reftime {reftime}')
                     pass
 
