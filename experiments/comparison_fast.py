@@ -24,33 +24,40 @@ def rmse(y_true, y_pred, **kwargs):
 _default_metrics = (mae, mse, rmse, r2)
 
 
+knn_regressor = KNeighborsRegressor(**{
+    'n_neighbors': 5,
+    'weights': 'distance',
+})
+
+
+
 MODELS = {
     'Linear Regression': LinearRegression(),
     'Support Vector Regression': scikit_SVR(**{
-            'C': 1.4,
-            'epsilon': 0.6,
-            'kernel': 'sigmoid',
-            'gamma': 0.001
-        }),
+        'C': 1.4,
+        'epsilon': 0.6,
+        'kernel': 'sigmoid',
+        'gamma': 0.001
+    }),
     'KNN': KNeighborsRegressor(**{
-            'n_neighbors': 5,
-            'weights': 'distance',
-        }),
+        'n_neighbors': 5,
+        'weights': 'distance',
+    }),
     'Model Tree': DecisionTreeRegressor(**{
-            'splitter': 'best',
-            'max_depth': 20,
-            'min_impurity_decrease': 0.25
-        }),
+        'splitter': 'best',
+        'max_depth': 20,
+        'min_impurity_decrease': 0.25
+    }),
     'Random Forest': RandomForestRegressor(**{
-            'n_estimators': 100,
-            'max_depth': 50,
-            'min_impurity_decrease': 0.30
-        }),
+        'n_estimators': 100,
+        'max_depth': 50,
+        'min_impurity_decrease': 0.30
+    }),
     'GBT': XGBRegressor(**{
-            'learning_rate': 0.05,
-            'n_estimators': 200,
-            'max_depth': 5,
-        })
+        'learning_rate': 0.05,
+        'n_estimators': 200,
+        'max_depth': 5,
+    })
 }
 
 
@@ -73,7 +80,11 @@ def run(models=tuple(MODELS.keys()), metrics=_default_metrics,
         y = np.asarray(y)
         for model_name in models:
             print(f'\n** Evaluating Model {model_name} **\n')
-            model = MultiOutputRegressor(estimator=MODELS[model_name], n_jobs=-1)
+            if model_name == 'KNN':
+                model = MultiOutputRegressor(estimator=MODELS[model_name], n_jobs=1)
+            else:
+                model = MultiOutputRegressor(estimator=MODELS[model_name], n_jobs=-1)
+            
             if method == 'cv':
                 # use a time-series splitter
                 splitter = TimeSeriesSplit(n_splits=folds)
