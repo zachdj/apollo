@@ -2,6 +2,7 @@ name: apollo
 
 channels:
     - conda-forge
+    - anaconda
 
 dependencies:
     # Core stack
@@ -19,6 +20,7 @@ dependencies:
     - scikit-learn
     - xgboost
     - requests
+    - flask
 
     # Documentation
     - sphinx
