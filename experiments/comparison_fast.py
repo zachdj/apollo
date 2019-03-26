@@ -61,14 +61,18 @@ def run(models=tuple(MODELS.keys()), metrics=_default_metrics,
         method='cv', folds=5,
         output='./results/comparison_fast'):
 
+    print('Comparison Experiment')
+
     output_dir = pathlib.Path(output).resolve()
 
     for target in targets:
+        print(f'\n*** Working on target {target} ***\n')
         ds = SolarDataset(first, last, target=target, target_hours=target_hours)
         x, y = ds.tabular()
         x = np.asarray(x)
         y = np.asarray(y)
         for model_name in models:
+            print(f'\n** Evaluating Model {model_name} **\n')
             model = MultiOutputRegressor(estimator=MODELS[model_name], n_jobs=-1)
             if method == 'cv':
                 # use a time-series splitter
@@ -96,6 +100,7 @@ def run(models=tuple(MODELS.keys()), metrics=_default_metrics,
             scores = {m: np.mean(np.asarray(evaluations[m]), axis=0) for m in evaluations}
 
             # output results
+            print(f'* Writing results for Model {model_name} using method {method} *')
             scores_df = pd.DataFrame(index=target_hours,
                                      columns=[m.__name__ for m in metrics])
             for metric in scores:
@@ -106,3 +111,5 @@ def run(models=tuple(MODELS.keys()), metrics=_default_metrics,
             outpath = outpath / f'{model_name}.csv'
 
             scores_df.to_csv(str(outpath), index_label='Target Hour')
+
+    print('Done!')
