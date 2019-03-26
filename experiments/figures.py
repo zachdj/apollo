@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pathlib
+from scipy.stats import linregress
 import sqlite3
 import xarray as xr
 
@@ -157,9 +158,18 @@ def _irr_correlations(start, stop, output):
     # plot irradiance vs cloud cover
     fig, axes = plt.subplots()
     x = dataset[cloud_cover_var].values
-    axes.scatter(x, array_a, color='r', label='Array A')
-    axes.scatter(x, array_b, color='g', label='Array B')
-    axes.scatter(x, array_e, color='b', label='Array E')
+    axes.scatter(x, array_a, color='r', alpha=0.5, label='Array A')
+    axes.scatter(x, array_b, color='g', alpha=0.5, label='Array B')
+    axes.scatter(x, array_e, color='b', alpha=0.5, label='Array E')
+
+    # plot trend lines
+    colors = ('r', 'g', 'b')
+    for idx, values in enumerate([array_a, array_b, array_e]):
+        slope, intercept, *rest = linregress(x, values)
+        min_x, max_x = min(x), max(x)
+        line_endpoints = min_x*slope + intercept, max_x*slope + intercept
+        axes.plot((min_x, max_x), line_endpoints,
+                  f'--{colors[idx]}', label='Trend Line')
 
     axes.set_title('Irradiance at 2PM EST vs. Total Cloud Cover')
     axes.set_xlabel('Cloud Cover (%)')
@@ -177,6 +187,15 @@ def _irr_correlations(start, stop, output):
     axes.scatter(x, array_b, color='g', label='Array B')
     axes.scatter(x, array_e, color='b', label='Array E')
 
+    # plot trend lines
+    colors = ('r', 'g', 'b')
+    for idx, values in enumerate([array_a, array_b, array_e]):
+        slope, intercept, *rest = linregress(x, values)
+        min_x, max_x = min(x), max(x)
+        line_endpoints = min_x*slope + intercept, max_x*slope + intercept
+        axes.plot((min_x, max_x), line_endpoints,
+                  f'--{colors[idx]}', label='Trend Line')
+
     axes.set_title('Irradiance at 2PM EST vs. Surface Air Temperature')
     axes.set_xlabel('Air Tempurature (Kelvin)')
     axes.set_ylabel('Irradiance (watts / m$^2$)')
@@ -192,6 +211,15 @@ def _irr_correlations(start, stop, output):
     axes.scatter(x, array_b, color='g', label='Array B')
     axes.scatter(x, array_e, color='b', label='Array E')
 
+    # plot trend lines
+    colors = ('r', 'g', 'b')
+    for idx, values in enumerate([array_a, array_b, array_e]):
+        slope, intercept, *rest = linregress(x, values)
+        min_x, max_x = min(x), max(x)
+        line_endpoints = min_x*slope + intercept, max_x*slope + intercept
+        axes.plot((min_x, max_x), line_endpoints,
+                  f'--{colors[idx]}', label='Trend Line')
+
     axes.set_title('Irradiance at 2PM EST vs. Downwelling Longwave Flux')
     axes.set_xlabel('Downwelling Longwave Flux (watts / m$^2$)')
     axes.set_ylabel('Irradiance (watts / m$^2$)')
@@ -206,8 +234,8 @@ def run(output='./output/figures', first='2017-01-01', last='2018-12-31'):
     outpath = pathlib.Path(output).resolve()
     outpath.mkdir(parents=True, exist_ok=True)
 
-    _irr_vs_hour(start=first, stop=last, output=outpath)
-    _irr_vs_month(start=first, stop=last, output=outpath)
+    # _irr_vs_hour(start=first, stop=last, output=outpath)
+    # _irr_vs_month(start=first, stop=last, output=outpath)
     _irr_correlations(start=first, stop=last, output=outpath)
 
 
