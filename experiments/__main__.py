@@ -6,6 +6,7 @@ import logging.config
 import os
 
 from experiments.comparison import run as run_comparison
+from experiments.comparison_fast import run as run_comparison_fast
 from experiments.figures import run as generate_figures
 from experiments.grid_expansion import run as run_grid_expansion
 
@@ -56,6 +57,7 @@ def parse_kwarg_list(kwarg_list):
 EXPERIMENTS = {
     'test': lambda: print('Ran test'),
     'comparison': run_comparison,
+    'comparison_fast': run_comparison_fast,
     'figures': generate_figures,
     'grid': run_grid_expansion
 }
