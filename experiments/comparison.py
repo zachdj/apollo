@@ -34,7 +34,7 @@ _default_metrics = (mae, mse, rmse, r2)
 def run(models=_default_models, metrics=_default_metrics,
         targets=('UGAAPOA1IRR', 'UGABPOA1IRR', 'UGAEPOA1IRR',),
         first='2017-01-01', last='2018-12-31',
-        method='cv', folds=5, split_size=0.5, output='./results'):
+        method='cv', folds=5, split_size=0.5, output='./results/comparison'):
 
     print('Comparison Experiment')
     model_classes = get_model_classes(models)

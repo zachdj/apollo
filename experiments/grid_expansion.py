@@ -21,7 +21,7 @@ _default_target = 'UGABPOA1IRR'
 
 def run(first='2017-01-01', last='2018-12-31',
         metrics=_default_metrics, method='cv',
-        folds=5, split_size=0.5, output='./results'):
+        folds=5, split_size=0.5, output='./results/grid'):
 
     print('Grid-Size Experiment')
     output_dir = pathlib.Path(output).resolve()
