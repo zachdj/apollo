@@ -1,6 +1,7 @@
 # generate data visualizations
 
 import matplotlib.pyplot as plt
+from matplotlib import rc as matplotlib_settings
 import numpy as np
 import pandas as pd
 import pathlib
@@ -51,7 +52,11 @@ def _irr_vs_hour(start, stop, output):
     axes.set_ylabel('Mean Irradiance (watts / m$^2$)')
     axes.legend()
 
+    # set size and font sizes
     fig.set_size_inches(10, 6)
+    axes.title.set_fontsize(16)
+    axes.xaxis.label.set_fontsize(14)
+    axes.yaxis.label.set_fontsize(14)
     plt.savefig(str(output / 'irr_vs_hour.png'))
     plt.close(fig)
 
@@ -102,7 +107,11 @@ def _irr_vs_month(start, stop, output):
     axes.set_ylabel('Mean Irradiance (watts / m$^2$)')
     axes.legend()
 
+    # set size and font sizes
     fig.set_size_inches(10, 6)
+    axes.title.set_fontsize(16)
+    axes.xaxis.label.set_fontsize(14)
+    axes.yaxis.label.set_fontsize(14)
     plt.savefig(str(output / 'irr_vs_month.png'))
     plt.close(fig)
 
@@ -177,7 +186,11 @@ def _irr_correlations(start, stop, output):
     axes.set_xticks(np.arange(0, 110, 10))
     axes.legend()
 
+    # set size and font sizes
     fig.set_size_inches(10, 6)
+    axes.title.set_fontsize(16)
+    axes.xaxis.label.set_fontsize(14)
+    axes.yaxis.label.set_fontsize(14)
     plt.savefig(str(output / 'irr_vs_clouds.png'))
 
     # plot irradiance vs air temperature
@@ -201,7 +214,11 @@ def _irr_correlations(start, stop, output):
     axes.set_ylabel('Irradiance (watts / m$^2$)')
     axes.legend()
 
+    # set size and font sizes
     fig.set_size_inches(10, 6)
+    axes.title.set_fontsize(16)
+    axes.xaxis.label.set_fontsize(14)
+    axes.yaxis.label.set_fontsize(14)
     plt.savefig(str(output / 'irr_vs_temp.png'))
 
     # plot irradiance vs air temperature
@@ -225,7 +242,11 @@ def _irr_correlations(start, stop, output):
     axes.set_ylabel('Irradiance (watts / m$^2$)')
     axes.legend()
 
+    # set size and font sizes
     fig.set_size_inches(10, 6)
+    axes.title.set_fontsize(16)
+    axes.xaxis.label.set_fontsize(14)
+    axes.yaxis.label.set_fontsize(14)
     plt.savefig(str(output / 'irr_vs_flux.png'))
     plt.close(fig)
 
@@ -234,8 +255,10 @@ def run(output='./output/figures', first='2017-01-01', last='2018-12-31'):
     outpath = pathlib.Path(output).resolve()
     outpath.mkdir(parents=True, exist_ok=True)
 
-    # _irr_vs_hour(start=first, stop=last, output=outpath)
-    # _irr_vs_month(start=first, stop=last, output=outpath)
+    matplotlib_settings('font', family='normal', size=12)
+
+    _irr_vs_hour(start=first, stop=last, output=outpath)
+    _irr_vs_month(start=first, stop=last, output=outpath)
     _irr_correlations(start=first, stop=last, output=outpath)
 
 
