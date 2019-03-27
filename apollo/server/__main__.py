@@ -8,6 +8,7 @@ usage: python -m apollo.server [-h] [--host IP] [--port N] [--html HTML_DIR]
                       [--log LOG]
 
 """
+
 import argparse
 from flask import Flask
 from flask import request
@@ -29,6 +30,11 @@ import apollo.storage as storage
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+app_config = {
+    'HTML_DIR': storage.get('assets/html'),
+    'DB_DIR': storage.get('GA-POWER'),
+    'DB_FILE': storage.get('GA-POWER') / 'solar_farm.sqlite',
+}
 
 
 def handle_bad_request(e):
@@ -40,7 +46,6 @@ def handle_bad_request(e):
 app.register_error_handler(400, handle_bad_request)
 
 
-#@app.route("/solar")
 def solar_query():
     try:
         groupby = request.args.get(cfg.QUERY_GROUPBY_KEY, "")
@@ -48,7 +53,8 @@ def solar_query():
             handler = handlers.SolarDBRequestHandlerPostProcessing()
         else:
             handler = handlers.SolarDBRequestHandler()
-        return handler.handle_request(request, dbfile=str(cfg.DB_FILE))
+        return handler.handle_request(request,
+                                      dbfile=str(app_config['DB_FILE']))
     except Exception as e:
         return handle_bad_request(e)
 
@@ -61,17 +67,12 @@ def get_status():
         return handle_bad_request(e)
 
 
-#@app.route('/html/<path:path>')
-def send_files(path):
-    return send_from_directory(cfg.HTML_DIR, path)
-
-
 @app.route('/tables')
 def get_tables():
     dbh = None
     try:
         source = request.args.get('source', None)
-        dbh = dbapi.DBHandler(cfg.DB_DIR/source)
+        dbh = dbapi.DBHandler(app_config['DB_DIR'] / source)
         dbh.connect()
         tables = dbh.tables()
         dbh.close()
@@ -85,7 +86,8 @@ def get_tables():
 @app.route('/sources')
 def get_sources():
     try:
-        sources = [f for f in os.listdir(cfg.DB_DIR) if f.endswith(".db")]
+        sources = [f for f in os.listdir(app_config['DB_DIR'])
+                   if f.endswith('.db') or f.endswith('.sqlite')]
         return jsonify(sources)
     except Exception as e:
         return handle_bad_request(e)
@@ -95,9 +97,9 @@ def get_sources():
 def get_columns():
     dbh = None
     try:
-        source = request.args.get("source", None)
-        table = request.args.get("table", None)
-        dbh = dbapi.DBHandler(cfg.DB_DIR/source)
+        source = request.args.get('source', None)
+        table = request.args.get('table', None)
+        dbh = dbapi.DBHandler(app_config['DB_DIR'] / source)
         dbh.connect()
         columns = dbh.column_names(table)
         dbh.close()
@@ -108,8 +110,8 @@ def get_columns():
         return handle_bad_request(e)
 
 
-def parsePath(inPath):
-    return Path(inPath.replace('"','').replace("'",""))
+def strip_quotes(string):
+    return str(string).replace('"', '').replace("'", "")
 
 
 def main():
@@ -140,7 +142,7 @@ def main():
         help='The directory storing the sqlite database(s) to use.')
     parser.add_argument(
         '--dbfile', metavar='DB_FILE', dest='db_file',
-        type=str, default='solar_farm.sqlite',
+        type=str, default=storage.get('GA-POWER') / 'solar_farm.sqlite',
         help='The default database file to use.')
     parser.add_argument(
         '--dburl', metavar='dburl', dest='dburl',
@@ -162,13 +164,16 @@ def main():
 
     logging.info(f'Starting Apollo server with config:\n{vars(args)}')
 
-    cfg.HTML_DIR = parsePath(str(args.html))
-    cfg.SCHEMA_DIR = parsePath(str(args.schemas))
-    cfg.DB_DIR = parsePath(str(args.db_dir))
-    cfg.DB_FILE = cfg.DB_DIR / args.db_file
+    app_config['HTML_DIR'] = Path(strip_quotes(args.html))
+    app_config['DB_DIR'] = Path(strip_quotes(args.db_dir))
+    app_config['DB_FILE'] = Path(strip_quotes(args.db_file))
+
+    cfg.SCHEMA_DIR = Path(strip_quotes(args.schemas))
 
     app.add_url_rule(args.dburl, 'solar_query', solar_query)
-    app.add_url_rule(args.htmlurl + "/<path:path>", 'send_files', send_files)
+    app.add_url_rule(
+        f'{args.htmlurl}/<path:path>', 'send_files',
+        lambda path: send_from_directory(app_config['HTML_DIR'], path))
 
     index_url = f'http://{args.host}:{args.port}/html/solar/start.html'
     try:

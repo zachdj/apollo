@@ -119,7 +119,7 @@ class SolarDBRequestHandler(ServerRequestHandler):
             timestamp = cfg.GROUP_BY_DICTIONARY[groupby_key]["timestamp"]
         else:
             groupby = ""
-            timestamp = cfg.TIMESTAMP
+            timestamp = 'TIMESTAMP'
         return timestamp, groupby
         
     def get_sql_columns(self, statistics=[], attributes=[]):
