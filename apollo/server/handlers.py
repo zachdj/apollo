@@ -145,11 +145,11 @@ class SolarDBRequestHandler(ServerRequestHandler):
             str: A SELECT statement including the specified attributes and stats
 
         '''
-        attributes = attributes or tuple()
+        attributes = attributes if attributes is not None else tuple()
         if statistics:
-            stats = (','.join([f'{stat}('+str(at)+')'
+            stats = [','.join([f'{stat}('+str(at)+')'
                                for at in attributes])
-                     for stat in statistics)
+                     for stat in statistics]
             return ','.join(stats)
         else:
             return ','.join(attributes)
@@ -210,7 +210,7 @@ class SolarDBRequestHandler(ServerRequestHandler):
 
             rows = df.values.tolist()
             attribute_list = [self.strip_statistics(colname) for colname in df]
-            for col_name, statistic in attribute_list:
+            for (col_name, statistic) in attribute_list:
                 if col_name not in unique_attribute_list:
                     unique_attribute_list.append(col_name)
                 if statistic and statistic not in unique_statistics_list:
@@ -253,7 +253,7 @@ class SolarDBRequestHandlerPostProcessing(SolarDBRequestHandler):
         
         Attributes should be a list of attributes in the specified table. 
         '''
-        attributes = attributes or tuple()
+        attributes = attributes if attributes is not None else tuple()
         return ','.join(attributes)
 
     def strip_statistics(self, name):
@@ -307,7 +307,7 @@ class SolarDBRequestHandlerPostProcessing(SolarDBRequestHandler):
 
             log_debug(attribute_list)
 
-            for col_name, statistic in attribute_list:
+            for (col_name, statistic) in attribute_list:
                 if col_name not in unique_attribute_list:
                     unique_attribute_list.append(col_name)
                 if statistic and statistic not in unique_statistics_list:
