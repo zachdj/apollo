@@ -1,7 +1,3 @@
-import apollo.storage as storage
-
-SCHEMA_DIR = storage.get('assets/schemas')
-
 STATISTICS = {
     'MIN', 'MAX', 'AVG', 'MEAN', 'COUNT', 'SUM',
     'PER5', 'PER10', 'PER20', 'PER25', 'PER50', 'PER75', 'PER90', 'PER95',

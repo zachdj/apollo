@@ -1,36 +1,38 @@
-"""
-Converts a set of csv file describing a datasource into a json dictionary. 
+''' Converts a csv file describing a datasource into a json dictionary.
 
-Each CSV file corresponds to a table in the database. Each row of the csv describes 
-an attribute of the data source (essentially a column of a database table).
-These are used especially when formatting the data for consumption by the end user. 
+Each CSV file corresponds to a table in the database.
+Each row of the csv describes an attribute of the data source
+(essentially a column of a database table).
+These are used especially when formatting the data for consumption
+by the end user.
 
 This script is intended to generate a single json file describing a data source. 
-The json file can be used by the web-based front end. If needed, it can be manually edited. 
+The json file can be used by the web-based front end.
+If needed, it can be manually edited.
 
-The headers of the csv file currently are: 
-
- * index: indicates the column index of the attribute in the corresponding database table. 
- * label: indicates the short name identifying of the attribute. 
+The headers of the csv file currently are:
+ * index: the column index of the attribute in the corresponding database table.
+ * label: the short name identifying of the attribute.
  * description: a longer description of the attribute. 
  * units: the measurement units of the attribute. 
- * sql_datatype: the datatype in the database table. 
- * chart_datatype: the datatype to pass to the client side (web-browser) data renderer. 
+ * sql_datatype: the data type in the database table.
+ * chart_datatype: the data type to pass to the client side data renderer.
 
-"""
+'''
 
-import pandas as pd
-import os
 import json
+import os
+import pandas as pd
 
 SCHEMA_NAME_KEY =   "name"
 SCHEMA_COL_KEY =    "columns"
-SCHEMA_LABEL_KEY =  "label";
-SCHEMA_DESCRIPTION_KEY = "description";
-SCHEMA_UNITS_KEY =  "units";
-SCHEMA_CHART_DATATYPE_KEY = "chart_datatype";
+SCHEMA_LABEL_KEY =  "label"
+SCHEMA_DESCRIPTION_KEY = "description"
+SCHEMA_UNITS_KEY =  "units"
+SCHEMA_CHART_DATATYPE_KEY = "chart_datatype"
 
 schema_dict = {}
+
 
 def extract_schemas(working_dir, outfile=None):
     """Process csv files in the given directory, returning a dictionary. 
@@ -41,7 +43,7 @@ def extract_schemas(working_dir, outfile=None):
     for root, dirs, files in os.walk(working_dir):
             for filename in files:
                 if filename.endswith('.csv'):
-                    name = filename.replace('.csv','')
+                    name = filename.replace('.csv', '')
                     schema = process_schema_file(name, working_dir+filename)
                     schema_list[name] = schema
     if outfile:
@@ -57,7 +59,7 @@ def process_schema_file(name, filename):
     df = pd.read_csv(filename, dtype=str, keep_default_na=False) 
     df1 = df.to_dict(orient='records')
     schema = {}
-    schema[SCHEMA_NAME_KEY]  = name;
+    schema[SCHEMA_NAME_KEY]  = name
     columns = {}
     for entry in df1:
         key = entry[SCHEMA_LABEL_KEY]
@@ -114,8 +116,8 @@ def process_csv_file(name, filename_in, file_out):
     df = pd.read_csv(filename_in, dtype=str, keep_default_na=False)
     print(df.values.tolist())
     schema = {}
-    schema['table']  = name;
-    schema['columns']  = df.values.tolist();
+    schema['table']  = name
+    schema['columns']  = df.values.tolist()
     return schema
     
 

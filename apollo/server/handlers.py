@@ -47,14 +47,17 @@ def log_error(msg, e=None):
 
 
 class ServerRequestHandler(abc.ABC):
-    def __init__(self, db_file):
+    def __init__(self, db_file, schema_dir):
         ''' Initialize a request handler.
 
         Args:
             db_file (str or Path):
                 The filepath of the sqlite database
+            schema_dir (str or Path):
+                The directory containing
         '''
         self.db_file = str(db_file)
+        self.schema_dir = str(schema_dir)
 
     @abc.abstractmethod
     def handle_request(self, request, args):
@@ -160,7 +163,7 @@ class SolarDBRequestHandler(ServerRequestHandler):
                 False otherwise
         '''
         try:
-            return schemas.get_schema_data(cfg.SCHEMA_DIR, source, table, a) \
+            return schemas.get_schema_data(self.schema_dir, source, table, a) \
                    is not None
         except Exception as ex:
             return False
@@ -214,7 +217,7 @@ class SolarDBRequestHandler(ServerRequestHandler):
                     unique_statistics_list.append(statistic)
 
                 metadata = schemas.get_schema_data(
-                    cfg.SCHEMA_DIR, source, site, col_name)
+                    self.schema_dir, source, site, col_name)
                 statprefix = ''
                 if statistic:
                     statprefix = f'{statistic} '
@@ -311,7 +314,7 @@ class SolarDBRequestHandlerPostProcessing(SolarDBRequestHandler):
                     unique_statistics_list.append(statistic)
 
                 metadata = schemas.get_schema_data(
-                    cfg.SCHEMA_DIR, source, site, col_name)
+                    self.schema_dir, source, site, col_name)
                 statprefix = ''
                 if statistic:
                     statprefix = f'{statistic} '

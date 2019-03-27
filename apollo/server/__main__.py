@@ -1,4 +1,4 @@
-""" Flask server for handling HTTP queries.
+''' Flask server for handling HTTP queries.
 
 Both queries for static files and queries to the solar farm database are handled
     
@@ -7,7 +7,7 @@ usage: python -m apollo.server [-h] [--host IP] [--port N] [--html HTML_DIR]
                       [--dbfile DB_FILE] [--dburl dburl] [--htmlurl htmlurl]
                       [--log LOG]
 
-"""
+'''
 
 import argparse
 from flask import Flask
@@ -31,13 +31,15 @@ logger = logging.getLogger(__name__)
 
 
 def setup_app(html_dir=storage.get('assets/html'),
+              schema_dir=storage.get('assets/schemas'),
               db_dir=storage.get('GA-POWER'),
               db_file=storage.get('GA-POWER') / 'solar_farm.sqlite',
               db_url='/solar',
               html_url='/html'):
     app = Flask(__name__)
-    preproc_handler = handlers.SolarDBRequestHandler(db_file)
-    postproc_handler = handlers.SolarDBRequestHandlerPostProcessing(db_file)
+    preproc_handler = handlers.SolarDBRequestHandler(db_file, schema_dir)
+    postproc_handler = \
+        handlers.SolarDBRequestHandlerPostProcessing(db_file, schema_dir)
 
     def handle_bad_request(e):
         logger.error(str(e))
@@ -168,17 +170,16 @@ def main():
     logging.info(f'Starting Apollo server with config: \n{config_string}')
 
     html_dir = Path(strip_quotes(args.html_dir))
+    schema_dir = Path(strip_quotes(args.schemas_dir))
     db_dir = Path(strip_quotes(args.db_dir))
     db_file = Path(strip_quotes(args.db_file))
 
     app = setup_app(html_dir=html_dir,
+                    schema_dir=schema_dir,
                     db_dir=db_dir,
                     db_file=db_file,
                     db_url=args.db_url,
                     html_url=args.html_url)
-
-    # TODO: refactor this so we don't use cfg module
-    cfg.SCHEMA_DIR = Path(strip_quotes(args.schemas_dir))
 
     index_url = f'http://{args.host}:{args.port}/html/solar/start.html'
     try:
