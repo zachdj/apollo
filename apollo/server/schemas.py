@@ -23,6 +23,7 @@ The headers of the csv file currently are:
 import json
 import os
 import pandas as pd
+from pathlib import Path
 
 SCHEMA_NAME_KEY =   "name"
 SCHEMA_COL_KEY =    "columns"
@@ -53,13 +54,12 @@ def extract_schemas(working_dir, outfile=None):
 
 
 def process_schema_file(name, filename):
-    """
-    creates a dictionary from a csv file. Rows become entries in the dictionary. 
-    """
+    ''' Create a dictionary from a csv file, where each row is a dict entry
+    '''
     df = pd.read_csv(filename, dtype=str, keep_default_na=False) 
     df1 = df.to_dict(orient='records')
-    schema = {}
-    schema[SCHEMA_NAME_KEY]  = name
+    schema = dict()
+    schema[SCHEMA_NAME_KEY] = name
     columns = {}
     for entry in df1:
         key = entry[SCHEMA_LABEL_KEY]
@@ -70,59 +70,58 @@ def process_schema_file(name, filename):
     schema[SCHEMA_COL_KEY] = columns
     return schema       
 
+
 def get_schema_data(schema_dir, source, table, attribute):
-    """
-    returns information about a given column (from a database source and table).
+    """ Get information about a given column from a db source and table
+
+    The schema needs to be stored in the `schema_dir`.
     
-    E.g., the units can be returned. The schemas is stored in a JSON file. 
+    E.g. the units can be returned.
     """
     global schema_dict 
     if source not in schema_dict:
         sfile = source+".json"
-        schema_dict[source] = load_schema_data(schema_dir/sfile)
+        schema_dict[source] = load_schema_data(Path(schema_dir) / sfile)
     try:
         return schema_dict[source][table][SCHEMA_COL_KEY][attribute]
     except Exception as e:
         print(e)
         return None
-    
+
+
 def load_schema_data(schema_file):
-    results = None
     with open(schema_file, 'r') as f:
         results = json.load(f)
     return results
 
 
 def process_csv(source, working_dir, outfile=None):
-    schema = {'source':source}
+    schema = {'source': source}
     tables = []
     for root, dirs, files in os.walk(working_dir):
             for filename in files:
                 if filename.endswith('.csv'):
-                    name = filename.replace('.csv','')
-                    table_schema = process_csv_file(name, working_dir+filename, working_dir+name + "_temp.csv")
+                    name = filename.replace('.csv', '')
+                    table_schema = process_csv_file(name, working_dir+filename)
                     tables.append(table_schema)
     schema['tables'] = tables
     if outfile:
         with open(outfile, 'w') as outf:
-            json.dump(schema, outf,indent=10)
+            json.dump(schema, outf, indent=10)
+
     
-    
-    
-def process_csv_file(name, filename_in, file_out):
-    """
-    creates a dictionary from a csv file. Rows become entries in the dictionary. 
+def process_csv_file(name, filename_in):
+    """ Get table name and column names from a csv file representing a table
     """
     df = pd.read_csv(filename_in, dtype=str, keep_default_na=False)
-    print(df.values.tolist())
-    schema = {}
-    schema['table']  = name
-    schema['columns']  = df.values.tolist()
-    return schema
+    return {
+        'table': name,
+        'columns': df.values.tolist()
+    }
     
 
 if __name__ == "__main__":
+    # TODO: refactor or remove
     working_dir = "C:/Users/fwmaier/Desktop/python/server/schemas/raw_csv/"
     outfile = working_dir + 'UGASolarArray.json'
     process_csv('UGASolarArray', working_dir, outfile)
-        
