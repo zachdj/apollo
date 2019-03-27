@@ -20,7 +20,10 @@ dependencies:
     - scikit-learn
     - xgboost
     - requests
+
+    # web app
     - flask
+    - waitress
 
     # Documentation
     - sphinx
