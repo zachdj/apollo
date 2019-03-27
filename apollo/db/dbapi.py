@@ -1,10 +1,12 @@
 """
 Defines conversion and database access routines for Solar Farm log data.
  
-This module defines an API for writing solar farm log data into an SQLite database. 
+This module defines an API for writing solar farm log data
+into an SQLite database.
 
-The input data (logged solar farm data) currently is in two formats. The earlier batch consists of 
-small, gzipped .log files pushed to UGA servers. The second batch was downloaded manually from REAPR, an internal website.
+The input data (logged solar farm data) currently is in two formats.
+The earlier batch consists of small, gzipped .log files pushed to UGA servers.
+The second batch was downloaded manually from REAPR, an internal website.
  
 https://reapr.southernco.com/NonSecure/LoginFrames.aspx?ReturnUrl=%2f 
  
@@ -13,9 +15,11 @@ Arrays A to E are solar arrays at the solar farm. The irradiance module stores
 solar radiation data recorded by multiple sensors (pyronometers). 
 
 Once converted, the data is stored in one of 8 tables (one for each module).
-The schemas for the database tables are stored in separate SQL CREATE TABLE statements. 
+The schemas for the database tables are stored in separate
+SQL CREATE TABLE statements.
 
-The routines here assume that the log data is in the proper format for insertion into the database.
+The routines here assume that the log data is in the proper format for insertion
+into the database.
 """ 
 
 import sqlite3
@@ -32,99 +36,97 @@ logger = logging.getLogger(__name__)
 
 
 def log_debug(msg, e=None):
-    """A simple wrapper method to `logging.debug`.
-    Included to make potential alteration to logging easier. 
-    """
-    if e is None:
-        e = ""
-    else:
-        e = "\n"+ str(e)
-    logger.debug(str(msg)+e)
+    ''' Wrapper method to `logging.info`.
+
+    Included to make potential alteration to logging easier.
+    '''
+    e = '' if e is None else f'\n{e}'
+    logger.debug(str(msg) + e)
+
 
 def log_info(msg, e=None):
-    """A simple wrapper method to `logging.info`.
-    
-    Included to make potential alteration to logging easier. 
-    """
-    if e is None:
-        e = ""
-    else:
-        e = "\n"+ str(e)
-    logger.info(str(msg) +  e)
+    ''' Wrapper method to `logging.info`.
+
+    Included to make potential alteration to logging easier.
+    '''
+    e = '' if e is None else f'\n{e}'
+    logger.info(str(msg) + e)
+
 
 def log_error(msg, e=None):
-    """A simple wrapper method to `logging.error`.
-    
-    Included to make potential alteration to logging easier. 
-    """
-    if e is None:
-        e = ""
-    else:
-        e = "\n"+ str(e)
+    ''' Wrapper method to `logging.error`.
+
+    Included to make potential alteration to logging easier.
+    '''
+    e = '' if e is None else f'\n{e}'
     logger.error(str(msg) + e)
     traceback.print_exc()
 
+
 class DBHandler:
-    """A wrapper for accessing an SQLite database. 
+    """ Wrapper for accessing an SQLite database.
     
     Attributes:
-    
-    db_file : str
-        the path to the sqlite database file
-    conn : 
-        a handle to an open database connection (or None)
+        db_file (str):
+            The path to the sqlite database file
+        conn (Connection):
+            A handle to an open database connection (or None)
     """
     
-    def __init__(self,dbfile):
-        """Create an instance of the database handler, storing the database file.
+    def __init__(self, db_file):
+        """ Initialize a database handler
         
         `self.conn` is initialized to `None`. 
         
         Args:
-            dbfile (str): 
-                the path to the sqlite database the handler should use. 
+            db_file (str):
+                The path to the sqlite database the handler should use.
         
         """
-        self.db_file = dbfile
+        self.db_file = db_file
         self.conn = None
 
     def connect(self):
-        """Connect to the database, storing (and returning) a handle to the connection. 
+        """ Open a database connection
         
-        Exceptions are suppressed (generating a log entry). If an Exception is encountered, None is returned. 
+        Exceptions are suppressed (generating a log entry).
+        If an Exception is encountered, None is returned.
         
         Returns:
-            ``sqlite3.Connection``: a handle to the database connection. 
+            ``sqlite3.Connection`` or None:
+                A handle to the database connection,
+                or None if an exception is caught
         """
         try:
             self.conn = sqlite3.connect(self.db_file)
             return self.conn
         except Exception as e:
-            log_error(f'Error connecting to db: {self.db_file}' , e)
+            log_error(f'Error connecting to db: {self.db_file}', e)
             return None
 
     def close(self):
-        """Close an open connection if there is one; otherwise do nothing. 
-        
-        Resets ``self.conn`` to ``None``.
+        """ Close the open connection if there is one
+
+        If there is no open connection, ths will have no effect
         """
         if self.conn is not None:
             self.conn.close()
             self.conn = None
         
     def execute(self, sql, commit=False):
-        """Creates a cursor and executes the given statement, returning the cursor.
+        """ Execute a SQL statement
         
-        Wraps execution in a try-except block, logging any exceptions encountered. 
+        Wraps execution in a try-except block,
+        logging any exceptions encountered.
         
         Args:
             sql (str):
                 The script to execute
             commit (bool):
-                Determines whether or not a commit is performed after execution. 
+                If True, a commit will be performed after executing the query
         
         Returns:
-            ``sqlite3.Cursor``: a handle to the cursor. 
+            ``sqlite3.Cursor``: The cursor used to execute the query
 
         """
         try:
@@ -132,137 +134,138 @@ class DBHandler:
             c.execute(sql)
             if commit:
                 self.conn.commit()
-            return c; 
+            return c
         except Exception as e:
             log_error(f'Error executing statement: {sql}', e)
 
-    def executescript(self,sql, commit=False):
-        """Creates a cursor and executes the given (multi)statement, returning the cursor.
+    def executescript(self, sql, commit=False):
+        """ Execute the given (multi)statement
         
-        Wraps execution in a try-except block, logging any exceptions encountered. 
+        Wraps execution in a try-except block,
+        logging any exceptions encountered.
         
         Args:
             sql (str):
                 The script to execute
             commit (bool):
-                Determines whether or not a commit is performed after execution. 
+                If True, a commit will be performed after executing the query
         Returns:
-            ``sqlite3.Cursor``: a handle to the cursor. 
+            ``sqlite3.Cursor``: The cursor used to execute the script.
         """
         try:
             c = self.conn.cursor()
             c.executescript(sql)
             if commit:
                 self.conn.commit()
-            return c; 
+            return c
         except Exception as e:
             log_error(f'Error executing statement: {sql}', e)
 
     def drop_table(self, table, commit=True):
-        """Drops a table, whether or not it exists. 
+        """ Drop a table
         
-        A try-except block is used to suppress
-        an error if the table does not already exist. 
+        If the table does not exist, this will have no effect.
+        Errors are suppressed.
                 
         Args:
             table (str):
                 The name of the table to drop
             commit (bool):
-                Determines whether or not a commit is performed after execution. 
+                If True, a commit will be performed after dropping the table
         """
         
-        sql = "DROP TABLE IF EXISTS " + table
-
+        sql = f'DROP TABLE IF EXISTS {table}'
         try:
             c = self.conn.cursor()
-            c.execute(sql);
+            c.execute(sql)
             if commit:
                 self.conn.commit()
 
         except Exception as e:
             log_error(f'Error executing statement: {sql}', e)
-
     
     def clear_table(self, table, commit=True):
-        """deletes all rows from a table. 
+        """ Delete all rows from a table
         
-        A try-except block is used to suppress errors. 
+        Errors are suppressed.
         
         Args:
             table (str):
+                The name of the table to clear
             commit (bool):
-                Determines whether or not a commit is performed after execution. 
+                If True, a commit will be performed after dropping the table
         """
-        
-        sql = "DELETE FROM " + table
+        sql = f'DELETE FROM {table}'
         try:
             c = self.conn.cursor()
-            c.execute(sql);
+            c.execute(sql)
             if commit:
                 self.conn.commit()
 
         except Exception as e:
             log_error(f'Error executing statement: {sql}', e)
-
     
     def tables(self):
-        """Returns a list of table names in the current database.
+        """ List the names of the tables in the current database.
         
         Returns:
-            ``list``: a list of strings (table names)
+            List[str]: The list of table names in the database
         """
-        sql = "select name from sqlite_master where type = 'table'";
+        sql = "select name from sqlite_master where type = 'table'"
         cur = self.execute(sql)
-        tables = [];
+        tables = []
         for t in cur.fetchall():
             tables.append(t[0])
         return tables
 
     def columns(self, table):
-        """Returns a list of entries containing table column information 
+        ''' List column information for the given table
         
         Args:
             table (str):
                 The name of the table to examine. 
         Returns:
-            ``list``: a list containing information on the table columns. 
-        """
-        sql = "PRAGMA table_info("+table+");"
+            List[str]: A list containing information on the table's columns.
+        '''
+        sql = f'PRAGMA table_info({table});'
         cur = self.execute(sql)
-        columns = cur.fetchall();
+        columns = cur.fetchall()
         return columns
 
     def column_names(self, table):
-        """Returns a list names of columns in the given table table.
+        ''' List the column names in the given table.
         
         Args:
             table (str):
                 The name of the table to examine. 
         Returns:
-            ``list``: a list of table column names. 
-        """
+            List[str]: a list of table column names.
+        '''
         columns = self.columns(table)
-        names = [];
+        names = []
         for row in columns:
             names.append(row[1])
         return names
 
-    def copy_insert(self, source_table,target_table):
-        """Copies one table into another, replacing records in the target if there is a conflict.
+    def copy_insert(self, source, target):
+        """ Copy one table into another
+
+        In the case of a conflict,
+        the records in the target table will be replaced.
         
         Args:
             source_table (str):
-                The name of the table to copy from. 
+                The name of the table to copy from.
             target_table (str):
                 The name of the table to copy into.
         """
-        statement = "INSERT OR REPLACE INTO " + target_table + " SELECT * FROM " + source_table
+        statement = f'INSERT OR REPLACE INTO {target} SELECT * FROM {source}'
         self.execute(statement, commit=True)
 
-    def insert_dataframe(self, df,table):
-        """Inserts a pandas dataframe into the specified table. 
+    def insert_dataframe(self, df, table):
+        ''' Insert a pandas dataframe into the specified table.
         
-        Uses df.to_sql(). The databframe must be of the appropriate format. 
+        Uses df.to_sql(). The dataframe must be of the appropriate format.
         If duplicates are found, then preexisting values will be overwritten. 
         
         Args:
@@ -270,20 +273,22 @@ class DBHandler:
                 The name of the table to copy from. 
             table (str):
                 The name of the table to insert into.
-       
-        """
+
+        Returns:
+            None
+        '''
         df.to_sql(table, self.conn, if_exists='replace', index=False)
 
     def table_pragma(self):
-        """Returns meta data on the database tables as a dictionary.
+        ''' Get metadata on the database tables as a dictionary.
         
         This is the result of the SQL statement `PRAGMA table_info(TableName)`.
         The results are dictionaries with the following keys: ``index``,
         ``name``, ``type``, ``notnull``, ``default``, ``key``. 
 
         Returns:
-            ``list``: a list of dictionaries. 
-        """
+            List[dict]: A list of table metadata
+        '''
         
         table_dict = {}
         tables = self.tables()
@@ -291,7 +296,7 @@ class DBHandler:
             cur = self.conn.cursor()
             sql = "PRAGMA table_info("+table+");"
             cur.execute(sql)
-            columns = cur.fetchall();
+            columns = cur.fetchall()
             col_list = []
             for row in columns:
                 col_list.append({
@@ -306,96 +311,91 @@ class DBHandler:
         return table_dict
     
     def file_to_string(self, filename):
-        """Reads in a file as a string. Should only be used for small text files.
-        
+        """ Read a file into an in-memory string.
+
+        Should only be used for small text files.
         
         Returns:
-            ``str``: the string contents of the file. 
+            str: The string contents of the file.
         """
         with open(filename, 'r') as f:
             return f.read()
-    
-    
 
 
 class REAPRWrapper:
-    """A class for converting data, stored in csv files, from the REAPR site format
-    to the internal sqlite database format. 
+    """ Converter for csv data from the REAPR site format to the internal
+    sqlite database format.
     
     The timestamp of the REAPR file is converted into an integer. Also, 
-    YEAR, DAY, HOUR, MINUTE, DAYOFYEAR, as well as three code columns (CODE1, CODE2, CODE3) 
-    are added after the timestamp to make the data in the REAPR files. 
-
-    Attributes:
-    
-    date_format : str
-        the format (e.g., '%m/%d/%Y %I:%M:%S %p') to use when parsing dates in input files. 
-    use_headers (boolean): 
-        indicates whether headers should be written to output (csv) files. 
+    YEAR, DAY, HOUR, MINUTE, DAYOFYEAR, as well as three code columns
+    (CODE1, CODE2, CODE3) are added after the timestamp to make the data
+    in the REAPR files.
     """
-    
-    def __init__(self,date_format='%m/%d/%Y %I:%M:%S %p'):
-        """Create an instance of the wrapper, storing the provided date format (if any). 
+    def __init__(self, date_format='%m/%d/%Y %I:%M:%S %p'):
+        """ Initialize a REAPRWrapper
         
         The date format indicates how timestamps in log records are to be processed. 
         
         Args:
             date_format (str): 
                 The format of input record timestamps. 
-            use_headers (boolean): 
+            use_headers (bool):
                 indicates whether headers should be included in written output (csv) files. 
         
         """
         self.date_format = date_format
         self.use_headers = True
-        
         # add CODE1 CODE2 CODE3 columns when coverting to db format. 
-        self.add_codes = True 
+        self.add_codes = True
 
-        # ### Process REAPR Files
-    def insert_csv(self, db_file,csv_to_insert,table=None, usetemp=True, convert=True):
-        """insert a csv file into the appropriate database table. If no table is specified, 
-        then the table is inferred from the column names. 
+    def insert_csv(self, db_file, csv_to_insert,
+                   table=None, usetemp=True, convert=True):
+        ''' Insert a csv file into the appropriate database table.
+
+        If no table is specified then the table is inferred from the columns.
         
-        The csv is first read into a dataframe and then the dataframe is inserted. If usetemp=True, 
-        then the dataframe is first inserted into a temporary database table and then 
-        copied to the final table (the temporary table is then purged). 
+        The csv is first read into a dataframe and then the dataframe is inserted.
+        If usetemp=True, then the dataframe is first inserted into a temporary
+        database table and then copied to the final table
+        (the temporary table is then purged).
         
         The temporary table is needed to avoid duplicates throwing errors 
         (df.to_sql() does not appear to allow automatic ignoring of duplicates). 
         
-        If convert=True, then the input csv will be transformed first, which converts the timestamp to 
-        an integer and adds columns for year, month, day, hour, minute, and day of year. 
+        If convert=True, then the input csv will be transformed first,
+        which converts the timestamp to an integer and adds columns for
+        year, month, day, hour, minute, and day of year.
  
         Args:
             db_file (str): 
-                The format of input record timestamps. 
+                The filepath of the sqlite database file.
             csv_to_insert (str): 
                 The format of input record timestamps. 
             table (str): 
-                The format of input record timestamps. 
-            usetemp (boolean): 
-                indicates whether data should be inserted into a temporary table first. 
-            convert (boolean): 
-                indicates whether the data should be converted (timestamps used to generated year, month, etc., columns). 
+                The name of the table where data will be inserted
+            usetemp (bool):
+                If True, data will be inserted into a temporary table first.
+            convert (bool):
+                If True, datetime data will be converted.
         
-        """
+        '''
         dbh = DBHandler(db_file)
         dbh.connect()
         try:
             df = self.csv_to_df(csv_to_insert, convert=convert)
-            if table == None:
+            if table is None:
                 module = self.infer_module(csv_to_insert,df)
             else:
                 module = table
             if usetemp:
-                dbh.insert_dataframe(df, module+"_TEMP")
-                dbh.copy_insert(module+"_TEMP",module)
-                dbh.clear_table(module+"_TEMP")
+                dbh.insert_dataframe(df, f'{module}_TEMP')
+                dbh.copy_insert(f'{module}_TEMP', module)
+                dbh.clear_table(f'{module}_TEMP')
             else:
                 dbh.insert_dataframe(df, module)
         except Exception as e:
-            log_error(f"Error processing REAPR file {csv_to_insert}.\nPerhaps a data mismatch?" ,e)
+            log_error(f'Error processing REAPR file {csv_to_insert}.'
+                      f'\nPerhaps a data mismatch?', e)
         dbh.close()
     
     def date_converter(self, timestamp):
@@ -432,7 +432,6 @@ class REAPRWrapper:
         df = self.csv_to_df(infile)
         df.to_csv(outfile, index = None, header=self.use_headers, compression=compression)
         log_debug("Done")
-        
 
     def convert_dir(self, file_dir, out_dir, compression='gzip'):
         """Use Pandas to convert all csv/gz files in specified directory to the internal database format, writing new files to an output directory. 
@@ -458,6 +457,7 @@ class REAPRWrapper:
                     self.convert_csv(infile,outfile,compression=compression)
                 except Exception as e:
                     log_error(f"Error processing REAPR file {filename}", e)
+
     def csv_to_df(self, filename, convert=True):
         """Use Pandas to read a csv file, possibly parsing the date and making the format consistent with the internal database format. 
         
@@ -479,12 +479,8 @@ class REAPRWrapper:
             ``Pandas.DataFrame``: A dataframe created from the csv data. 
        """
         # load data from csv into pandas dataframe
-        #df = pd.read_csv(filename,converters={'MetricDate':pd.to_datetime}))
         if not convert:
             return pd.read_csv(filename)
-
-        #df = pd.read_csv(filename,converters={'MetricDate':self.date_converter})
-        #dates = pd.DatetimeIndex(df['MetricDate'])
 
         df = pd.read_csv(filename,converters={0:self.date_converter})
         dates = pd.DatetimeIndex(df.iloc[:,0])
@@ -494,7 +490,8 @@ class REAPRWrapper:
         for i in range(len(column_names)):
             df.rename(columns={column_names[i]:column_names[i].replace("-","")}, inplace=True)
                 
-        # add 3 code columns at positions 1,2,3 (done for compatibility with ftp data format)
+        # add 3 code columns at positions 1,2,3
+        # (done for compatibility with ftp data format)
         if self.add_codes:
             df.insert(1, "CODE3", 0) 
             df.insert(1, "CODE2", 0) 
@@ -506,15 +503,10 @@ class REAPRWrapper:
         df.insert(1, "HOUR",        dates.hour)
         df.insert(1, "DAY",         dates.day) 
         df.insert(1, "MONTH",       dates.month) 
-        df.insert(1, "YEAR",        dates.year) 
-        
-        # add a unix representation of the timestamp (done because SQLite doesn't have a date datatype).
-        #df.insert(1, "TIMESTAMP", df['MetricDate'].astype(np.int64)/int(1e9))
-        #df.drop(columns=['MetricDate'],inplace=True)
+        df.insert(1, "YEAR",        dates.year)
 
         df.insert(1, "TIMESTAMP", df.iloc[:,0].astype(np.int64)/int(1e9))
-        #df.drop(columns=[0],inplace=True)
-        df.drop([df.columns[0]] ,  axis='columns', inplace=True)
+        df.drop([df.columns[0]], axis='columns', inplace=True)
         
         return df
     
@@ -576,8 +568,6 @@ class SolarLogWrapper(REAPRWrapper):
     use_headers (boolean): 
         indicates whether headers should be written to output (csv) files. By default, headers are not written. 
     """
-
-
     def __init__(self,date_format="'%Y-%m-%d %H:%M:%S'"):
         """Create an instance of the wrapper, storing the provided date format (if any). 
         
@@ -627,7 +617,6 @@ class SolarLogWrapper(REAPRWrapper):
             log_error(f"Error converting {filename} to dataframe.",e)
         return df
 
-
     def infer_module(self, in_filename, df):
         """
         Examine the dataframe column names to infer the solar farm module consistent
@@ -644,7 +633,6 @@ class SolarLogWrapper(REAPRWrapper):
             str: One of "BASE", "A","B","C","D","E","IRRADIANCE","TRACKING", or ``None``.
       
         """
-        
         in_filename= str(in_filename)
         
         if 'mb-001' in in_filename:
@@ -681,7 +669,7 @@ class SolarLogWrapper(REAPRWrapper):
             out_file (str):
                 The output file to generate.
         """
-        error_count = 0; 
+        error_count = 0
         with gzip.open(out_file, 'wb') as outfile:
             for root, dirs, files in os.walk(in_dir):
                 log_info(f"\nProcessing: {in_dir}")
@@ -701,8 +689,8 @@ class SolarLogWrapper(REAPRWrapper):
 
 
 if __name__ == "__main__":
+    # TODO: refactor or remove
     wrapper = SolarLogWrapper()
     indir = Path("I:/Solar Radition Project Data April 2018/apollo/server/ingz_raw")
     outfile = Path("I:/Solar Radition Project Data April 2018/apollo/server/out.csv.gz")
     wrapper.concat_logs(indir, outfile)
-        
