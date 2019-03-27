@@ -1,0 +1,114 @@
+index,label,description,units,sql_datatype,chart_datatype
+1,TIMESTAMP,Unix integer timestamp,s,INTEGER,datetime
+2,YEAR,Year of the observation,,INTEGER,number
+3,MONTH,Month (1-12) of the observation,,INTEGER,number
+4,DAY,Day of the month,,INTEGER,number
+5,HOUR,Hour (0-23) of the observation,,INTEGER,number
+6,MINUTE,Minute of the Hour (0-59),,INTEGER,number
+7,DAYOFYEAR,Day of the Year,,INTEGER,number
+8,CODE1,System Code 1 (not used in database),,DOUBLE,number
+9,CODE2,System Code 2 (not used in database),,DOUBLE,number
+10,CODE3,System Code 3 (not used in database),,DOUBLE,number
+11,UGAAMETERACL1V,Phase to neutral voltage AN,V,DOUBLE,number
+12,UGAAMETERACL2V,Phase to neutral voltage BN,V,DOUBLE,number
+13,UGAAMETERACL3V,Phase to neutral voltage CN,V,DOUBLE,number
+14,UGAAMETERACL1A,Line current phase A,A,DOUBLE,number
+15,UGAAMETERACL2A,Line current phase B,A,DOUBLE,number
+16,UGAAMETERACL3A,Line current phase C,A,DOUBLE,number
+17,UGAAMETERACW,Active Power,W,DOUBLE,number
+18,UGAAMETERACVAR,Reactive Power,VAR,DOUBLE,number
+19,UGAAMETERACL1ANEU,Line current neutral,A,DOUBLE,number
+20,UGAAMETERACDELWH,Generated Active Energy,Wh,DOUBLE,number
+21,UGAAMETERACRECWH,Consumed Active Energy,Wh,DOUBLE,number
+22,UGAAMETERACNETWH,Net Active Energy,Wh,DOUBLE,number
+23,UGAAMETERACDELVARH,Generated Reactive Energy,VARh,DOUBLE,number
+24,UGAAMETERACRECVARH,Consumed Reactive Energy,VARh,DOUBLE,number
+25,UGABMETERACL1V,Phase to neutral voltage AN,V,DOUBLE,number
+26,UGABMETERACL2V,Phase to neutral voltage BN,V,DOUBLE,number
+27,UGABMETERACL3V,Phase to neutral voltage CN,V,DOUBLE,number
+28,UGABMETERACL1A,Line current phase A,A,DOUBLE,number
+29,UGABMETERACL2A,Line current phase B,A,DOUBLE,number
+30,UGABMETERACL3A,Line current phase C,A,DOUBLE,number
+31,UGABMETERACW,Active Power,W,DOUBLE,number
+32,UGABMETERACVAR,Reactive Power,VAR,DOUBLE,number
+33,UGABMETERACL1ANEU,Line current neutral,A,DOUBLE,number
+34,UGABMETERACDELWH,Generated Active Energy,Wh,DOUBLE,number
+35,UGABMETERACRECWH,Consumed Active Energy,Wh,DOUBLE,number
+36,UGABMETERACNETWH,Net Active Energy,Wh,DOUBLE,number
+37,UGABMETERACDELVARH,Generated Reactive Energy,VARh,DOUBLE,number
+38,UGABMETERACRECVARH,Consumed Reactive Energy,VARh,DOUBLE,number
+39,UGACMETERACL1V,Phase to neutral voltage AN,V,DOUBLE,number
+40,UGACMETERACL2V,Phase to neutral voltage BN,V,DOUBLE,number
+41,UGACMETERACL3V,Phase to neutral voltage CN,V,DOUBLE,number
+42,UGACMETERACL1A,Line current phase A,A,DOUBLE,number
+43,UGACMETERACL2A,Line current phase B,A,DOUBLE,number
+44,UGACMETERACL3A,Line current phase C,A,DOUBLE,number
+45,UGACMETERACW,Active Power,W,DOUBLE,number
+46,UGACMETERACVAR,Reactive Power,VAR,DOUBLE,number
+47,UGACMETERACL1ANEU,Line current neutral,A,DOUBLE,number
+48,UGACMETERACDELWH,Generated Active Energy,Wh,DOUBLE,number
+49,UGACMETERACRECWH,Consumed Active Energy,Wh,DOUBLE,number
+50,UGACMETERACNETWH,Net Active Energy,Wh,DOUBLE,number
+51,UGACMETERACDELVARH,Generated Reactive Energy,VARh,DOUBLE,number
+52,UGACMETERACRECVARH,Consumed Reactive Energy,VARh,DOUBLE,number
+53,UGADMETERACL1V,Phase to neutral voltage AN,V,DOUBLE,number
+54,UGADMETERACL2V,Phase to neutral voltage BN,V,DOUBLE,number
+55,UGADMETERACL3V,Phase to neutral voltage CN,V,DOUBLE,number
+56,UGADMETERACL1A,Line current phase A,A,DOUBLE,number
+57,UGADMETERACL2A,Line current phase B,A,DOUBLE,number
+58,UGADMETERACL3A,Line current phase C,A,DOUBLE,number
+59,UGADMETERACW,Active Power,W,DOUBLE,number
+60,UGADMETERACVAR,Reactive Power,VAR,DOUBLE,number
+61,UGADMETERACL1ANEU,Line current neutral,A,DOUBLE,number
+62,UGADMETERACDELWH,Generated Active Energy,Wh,DOUBLE,number
+63,UGADMETERACRECWH,Consumed Active Energy,Wh,DOUBLE,number
+64,UGADMETERACNETWH,Net Active Energy,Wh,DOUBLE,number
+65,UGADMETERACDELVARH,Generated Reactive Energy,VARh,DOUBLE,number
+66,UGADMETERACRECVARH,Consumed Reactive Energy,VARh,DOUBLE,number
+67,UGAEMETERACL1V,Phase to neutral voltage AN,V,DOUBLE,number
+68,UGAEMETERACL2V,Phase to neutral voltage BN,V,DOUBLE,number
+69,UGAEMETERACL3V,Phase to neutral voltage CN,V,DOUBLE,number
+70,UGAEMETERACL1A,Line current phase A,A,DOUBLE,number
+71,UGAEMETERACL2A,Line current phase B,A,DOUBLE,number
+72,UGAEMETERACL3A,Line current phase C,A,DOUBLE,number
+73,UGAEMETERACW,Active Power,W,DOUBLE,number
+74,UGAEMETERACVAR,Reactive Power,VAR,DOUBLE,number
+75,UGAEMETERACL1ANEU,Line current neutral,A,DOUBLE,number
+76,UGAEMETERACDELWH,Generated Active Energy,Wh,DOUBLE,number
+77,UGAEMETERACRECWH,Consumed Active Energy,Wh,DOUBLE,number
+78,UGAEMETERACNETWH,Net Active Energy,Wh,DOUBLE,number
+79,UGAEMETERACDELVARH,Generated Reactive Energy,VARh,DOUBLE,number
+80,UGAEMETERACRECVARH,Consumed Reactive Energy,VARh,DOUBLE,number
+81,UGACONNEXMETERACL1V,Phase to neutral voltage AN,V,DOUBLE,number
+82,UGACONNEXMETERACL2V,Phase to neutral voltage BN,V,DOUBLE,number
+83,UGACONNEXMETERACL3V,Phase to neutral voltage CN,V,DOUBLE,number
+84,UGACONNEXMETERACL1A,Line current phase A,A,DOUBLE,number
+85,UGACONNEXMETERACL2A,Line current phase B,A,DOUBLE,number
+86,UGACONNEXMETERACL3A,Line current phase C,A,DOUBLE,number
+87,UGACONNEXMETERACW,Active Power,W,DOUBLE,number
+88,UGACONNEXMETERACVAR,Reactive Power,VAR,DOUBLE,number
+89,UGACONNEXMETERACL1ANEU,Line current neutral,A,DOUBLE,number
+90,UGACONNEXMETERACDELWH,Generated Active Energy,Wh,DOUBLE,number
+91,UGACONNEXMETERACRECWH,Consumed Active Energy,Wh,DOUBLE,number
+92,UGACONNEXMETERACNETWH,Net Active Energy,Wh,DOUBLE,number
+93,UGACONNEXMETERACDELVARH,Generated Reactive Energy,VARh,DOUBLE,number
+94,UGACONNEXMETERACRECVARH,Consumed Reactive Energy,VARh,DOUBLE,number
+95,UGAPOIMETERACL1V,Inst. Volts Phase A,V,DOUBLE,number
+96,UGAPOIMETERACL2V,Inst. Volts Phase B,V,DOUBLE,number
+97,UGAPOIMETERACL3V,Inst. Volts Phase C,V,DOUBLE,number
+98,UGAPOIMETERACL1A,Inst. Amps Phase A,A,DOUBLE,number
+99,UGAPOIMETERACL2A,Inst. Amps Phase B,A,DOUBLE,number
+100,UGAPOIMETERACL3A,Inst. Amps Phase C,A,DOUBLE,number
+101,UGAPOIMETERACKW,Inst. KW,kW,DOUBLE,number
+102,UGAPOIMETERACKVAR,Inst. KVAR,kVAR,DOUBLE,number
+103,UGAPOIMETERACPF,Inst. PF,,DOUBLE,number
+104,UGAPOIMETERACDELKWH,Del. KWH,kWh,DOUBLE,number
+105,UGAPOIMETERACDELKVARH,Del. KVARH,kVARh,DOUBLE,number
+106,UGAPOIMETERACRECKWH,Rec. KWH,kWh,DOUBLE,number
+107,UGAPOIMETERACRECKVARH,Rec. KVARH,kVARh,DOUBLE,number
+108,UGAMET01BARPRESS,Pressure sensor BMP01: Barametric Pressure - from Logger,hPa,DOUBLE,number
+109,UGAMET01HUM,Relative Humidity Probe HMP01: Relative Humidity Value - from Logger,%,DOUBLE,number
+110,UGAMET01AMBTEMP,Temperature Probe HMP01: Ambient Temperature Value - from Logger,ºC,DOUBLE,number
+111,UGAMET01RAIN1D,Tipping Bucket  PCIP01: Rain Precipitation 1 Day Value - from Logger,l/m2,DOUBLE,number
+112,UGAMET01WINDDIR,Wind Direction Sensor WDIR01: Direction Value - from Logger,Degrees,DOUBLE,number
+113,UGAMET01WINDSPD,Wind Speed Sensor  WSP01: Speed Value - from Logger,m/s,DOUBLE,number

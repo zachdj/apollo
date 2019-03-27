@@ -1,0 +1,45 @@
+label,description,units,sql_datatype,chart_datatype
+TIMESTAMP,,,DATETIME,datetime
+SITEID,Site ID,,DOUBLE,number
+YEAR,Year,,DOUBLE,number
+JULIANDAY,Julian Day,,DOUBLE,number
+TIMEOFDAY,Time Of Day,,DOUBLE,number
+JULIANDAYHOUR,Julian Day and Hour,,DOUBLE,number
+AIRTEMPERATURE,Air Temperature,C,DOUBLE,number
+HUMIDITY,Humidity,%,DOUBLE,number
+DEWPOINT,Dew Point,C,DOUBLE,number
+VAPORPRESSURE,Vapor Pressure,kPa,DOUBLE,number
+VAPORPRESSUREDEFICIT,Vapor Pressure Deficit,kPa,DOUBLE,number
+BAROMETRICPRESSURE,Barometric Pressure,kPa,DOUBLE,number
+WINDSPEED,Wind Speed,m/s,DOUBLE,number
+WINDDIRECTION,Wind Direction,0-360,DOUBLE,number
+STANDARDDEVIATION,Standard Deviation,0-360,DOUBLE,number
+MAXIMUMWINDSPEED,Maximum Windspeed,m/s,DOUBLE,number
+TIMEOFMAXIMUMWINDSPEED,Time of Maximum Windspeed,,DOUBLE,number
+SOILTEMPERATURE2CM,Soil Temperature 2cm,C,DOUBLE,number
+SOILTEMPERATURE5CM,Soil Temperature 5cm,C,DOUBLE,number
+SOILTEMPERATURE10CM,Soil Temperature 10cm,C,DOUBLE,number
+SOILTEMPERATURE20CM,Soil Temperature 20cm,C,DOUBLE,number
+SOILTEMPERATUREA,Soil Temperature A,C,DOUBLE,number
+SOILTEMPERATUREB,Soil Temperature B,C,DOUBLE,number
+SOILMOISTURE,Soil Moisture,%,DOUBLE,number
+PAN,PAN,mm,DOUBLE,number
+EVAP,Evap,n/a,DOUBLE,number
+WATERTEMPERATURE,Water Temperature,C,DOUBLE,number
+SOLARRADIATION,Solar Radiation,W/m^2,DOUBLE,number
+TOTALSOLARRADIATION,Total Solar Radiation,KJ/m^2,DOUBLE,number
+PAR,PAR,umole/m^2*s,DOUBLE,number
+TOTALPAREINSTEIN,Total PAR Einstein,Einstein/m^2,DOUBLE,number
+NETRADIATION,Net Radiation,W/m^2,DOUBLE,number
+TOTALNETRADIATION,Total Net Radiation,KJ/m^2,DOUBLE,number
+RAINFALL,Rainfall,mm,DOUBLE,number
+RAINFALL2,Rainfall 2,mm,DOUBLE,number
+MAXRAINFALL,Max Rainfall,mm,DOUBLE,number
+TIMEOFMAXRAINFALL,Time of Max Rainfail,,DOUBLE,number
+MAXRAINFALL2,Max Rainfall 2,mm,DOUBLE,number
+TIMEOFMAXRAINFALL2,Time of Max Rainfall,,DOUBLE,number
+LEAFWETNESS,Leaf Wetness,,DOUBLE,number
+WETNESSFREQUENCY,Wetness Frequency,%,DOUBLE,number
+BATTERYVOLTAGE,Battery Voltage,volts,DOUBLE,number
+FUELTEMPERATURE,Fuel Temperature,C,DOUBLE,number
+FUELMOISTURE,Fuel Moisture,%,DOUBLE,number

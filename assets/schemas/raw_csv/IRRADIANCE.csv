@@ -1,0 +1,37 @@
+index,label,description,units,sql_datatype,chart_datatype
+1,TIMESTAMP,Unix integer timestamp,s,INTEGER,datetime
+2,YEAR,Year of the observation,,INTEGER,number
+3,MONTH,Month (1-12) of the observation,,INTEGER,number
+4,DAY,Day of the month,,INTEGER,number
+5,HOUR,Hour (0-23) of the observation,,INTEGER,number
+6,MINUTE,Minute of the Hour (0-59),,INTEGER,number
+7,DAYOFYEAR,Day of the Year,,INTEGER,number
+8,CODE1,System Code 1 (not used in database),,DOUBLE,number
+9,CODE2,System Code 2 (not used in database),,DOUBLE,number
+10,CODE3,System Code 3 (not used in database),,DOUBLE,number
+11,UGAAPOA1IRR,Pyranometer PYR01: Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+12,UGAAPOA2IRR,Pyranometer PYR02: LICOR - Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+13,UGAAPOA3IRR,Pyranometer PYR03: LICOR  Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+14,UGAAPOAREFIRR,Reference Cell: Plane of Array Irradiance,w/m2,DOUBLE,number
+15,UGABPOA1IRR,Pyranometer PYR01: Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+16,UGABPOA2IRR,Pyranometer PYR02: LICOR - Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+17,UGABPOA3IRR,Pyranometer PYR03: LICOR  Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+18,UGABPOAREFIRR,Reference Cell: Plane of Array Irradiance,w/m2,DOUBLE,number
+19,UGADPOA1IRR,Pyranometer PYR01: Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+20,UGADPOA2IRR,Pyranometer PYR02: LICOR - Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+21,UGADPOA3IRR,Pyranometer PYR03: LICOR  Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+22,UGADPOAREFIRR,Reference Cell: Plane of Array Irradiance,w/m2,DOUBLE,number
+23,UGACPOA1IRR,Pyranometer PYR01: Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+24,UGACPOA2IRR,Pyranometer PYR02: LICOR - Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+25,UGACPOA3IRR,Pyranometer PYR03: LICOR  Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+26,UGACPOAREFIRR,Reference Cell: Plane of Array Irradiance,w/m2,DOUBLE,number
+27,UGAEPOA1IRR,Pyranometer PYR01: Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+28,UGAEPOA2IRR,Pyranometer PYR02: LICOR - Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+29,UGAEPOA3IRR,Pyranometer PYR03: LICOR  Irradiance - Instantaneous - Plane of Array Value - from Logger,w/m2,DOUBLE,number
+30,UGAEPOAREFIRR,Reference Cell: Plane of Array Irradiance,w/m2,DOUBLE,number
+31,UGAMET01POA1IRR,Pyranometer PYR01: Irradiance - Instantaneous - Global Horiyontal Value - from Logger,w/m2,DOUBLE,number
+32,UGAMET01POA2IRR,Pyranometer PYR02: Irradiance - Instantaneous - Global Horiyontal Value - from Logger,w/m2,DOUBLE,number
+33,UGAMET02GHIIRR,Solys 2: Global Horiyontal Irradiance,w/m2,DOUBLE,number
+34,UGAMET02DHIIRR,Solys 2: Diffuse Irradiance,w/m2,DOUBLE,number
+35,UGAMET02DNIIRR,Solys 2: Direct Normal Irradiance,w/m2,DOUBLE,number
+36,UGAMET02FIRIRR,Solys 2: Far Infrared Irradiance,w/m2,DOUBLE,number

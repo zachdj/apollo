@@ -1,0 +1,158 @@
+index,label,description,units,sql_datatype,chart_datatype
+1,TIMESTAMP,Unix integer timestamp,s,INTEGER,datetime
+2,YEAR,Year of the observation,,INTEGER,number
+3,MONTH,Month (1-12) of the observation,,INTEGER,number
+4,DAY,Day of the month,,INTEGER,number
+5,HOUR,Hour (0-23) of the observation,,INTEGER,number
+6,MINUTE,Minute of the Hour (0-59),,INTEGER,number
+7,DAYOFYEAR,Day of the Year,,INTEGER,number
+8,CODE1,System Code 1 (not used in database),,DOUBLE,number
+9,CODE2,System Code 2 (not used in database),,DOUBLE,number
+10,CODE3,System Code 3 (not used in database),,DOUBLE,number
+11,UGABINV01INVSTATUS,Device Status,,DOUBLE,number
+12,UGABINV01ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+13,UGABINV01ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+14,UGABINV01DC1A,DC Current Input 1,A,DOUBLE,number
+15,UGABINV01DC1V,DC Voltage Input 1,V,DOUBLE,number
+16,UGABINV01DC1W,DC Power Input 1,W,DOUBLE,number
+17,UGABINV01ACW,Active Power Across all lines,W,DOUBLE,number
+18,UGABINV01ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+19,UGABINV01ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+20,UGABINV01ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+21,UGABINV01ACL1A,Grid Current L1,A,DOUBLE,number
+22,UGABINV01ACL2A,Grid Current L2,A,DOUBLE,number
+23,UGABINV01ACL3A,Grid Current L3,A,DOUBLE,number
+24,UGABINV01ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+25,UGABINV01DC2A,DC Current Input 2,I,DOUBLE,number
+26,UGABINV01DC2V,DC Voltage Input 2,V,DOUBLE,number
+27,UGABINV01DC2W,DC Power Input 2,W,DOUBLE,number
+28,UGABINV01ERR,Error Code,,DOUBLE,number
+29,UGABINV02INVSTATUS,Device Status,,DOUBLE,number
+30,UGABINV02ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+31,UGABINV02ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+32,UGABINV02DC1A,DC Current Input 1,A,DOUBLE,number
+33,UGABINV02DC1V,DC Voltage Input 1,V,DOUBLE,number
+34,UGABINV02DC1W,DC Power Input 1,W,DOUBLE,number
+35,UGABINV02ACW,Active Power Across all lines,W,DOUBLE,number
+36,UGABINV02ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+37,UGABINV02ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+38,UGABINV02ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+39,UGABINV02ACL1A,Grid Current L1,A,DOUBLE,number
+40,UGABINV02ACL2A,Grid Current L2,A,DOUBLE,number
+41,UGABINV02ACL3A,Grid Current L3,A,DOUBLE,number
+42,UGABINV02ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+43,UGABINV02DC2A,DC Current Input 2,I,DOUBLE,number
+44,UGABINV02DC2V,DC Voltage Input 2,V,DOUBLE,number
+45,UGABINV02DC2W,DC Power Input 2,W,DOUBLE,number
+46,UGABINV02ERR,Error Code,,DOUBLE,number
+47,UGABINV03INVSTATUS,Device Status,,DOUBLE,number
+48,UGABINV03ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+49,UGABINV03ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+50,UGABINV03DC1A,DC Current Input 1,A,DOUBLE,number
+51,UGABINV03DC1V,DC Voltage Input 1,V,DOUBLE,number
+52,UGABINV03DC1W,DC Power Input 1,W,DOUBLE,number
+53,UGABINV03ACW,Active Power Across all lines,W,DOUBLE,number
+54,UGABINV03ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+55,UGABINV03ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+56,UGABINV03ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+57,UGABINV03ACL1A,Grid Current L1,A,DOUBLE,number
+58,UGABINV03ACL2A,Grid Current L2,A,DOUBLE,number
+59,UGABINV03ACL3A,Grid Current L3,A,DOUBLE,number
+60,UGABINV03ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+61,UGABINV03DC2A,DC Current Input 2,I,DOUBLE,number
+62,UGABINV03DC2V,DC Voltage Input 2,V,DOUBLE,number
+63,UGABINV03DC2W,DC Power Input 2,W,DOUBLE,number
+64,UGABINV03ERR,Error Code,,DOUBLE,number
+65,UGABINV04INVSTATUS,Device Status,,DOUBLE,number
+66,UGABINV04ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+67,UGABINV04ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+68,UGABINV04DC1A,DC Current Input 1,A,DOUBLE,number
+69,UGABINV04DC1V,DC Voltage Input 1,V,DOUBLE,number
+70,UGABINV04DC1W,DC Power Input 1,W,DOUBLE,number
+71,UGABINV04ACW,Active Power Across all lines,W,DOUBLE,number
+72,UGABINV04ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+73,UGABINV04ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+74,UGABINV04ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+75,UGABINV04ACL1A,Grid Current L1,A,DOUBLE,number
+76,UGABINV04ACL2A,Grid Current L2,A,DOUBLE,number
+77,UGABINV04ACL3A,Grid Current L3,A,DOUBLE,number
+78,UGABINV04ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+79,UGABINV04DC2A,DC Current Input 2,I,DOUBLE,number
+80,UGABINV04DC2V,DC Voltage Input 2,V,DOUBLE,number
+81,UGABINV04DC2W,DC Power Input 2,W,DOUBLE,number
+82,UGABINV04ERR,Error Code,,DOUBLE,number
+83,UGABINV05INVSTATUS,Device Status,,DOUBLE,number
+84,UGABINV05ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+85,UGABINV05ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+86,UGABINV05DC1A,DC Current Input 1,A,DOUBLE,number
+87,UGABINV05DC1V,DC Voltage Input 1,V,DOUBLE,number
+88,UGABINV05DC1W,DC Power Input 1,W,DOUBLE,number
+89,UGABINV05ACW,Active Power Across all lines,W,DOUBLE,number
+90,UGABINV05ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+91,UGABINV05ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+92,UGABINV05ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+93,UGABINV05ACL1A,Grid Current L1,A,DOUBLE,number
+94,UGABINV05ACL2A,Grid Current L2,A,DOUBLE,number
+95,UGABINV05ACL3A,Grid Current L3,A,DOUBLE,number
+96,UGABINV05ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+97,UGABINV05DC2A,DC Current Input 2,I,DOUBLE,number
+98,UGABINV05DC2V,DC Voltage Input 2,V,DOUBLE,number
+99,UGABINV05DC2W,DC Power Input 2,W,DOUBLE,number
+100,UGABINV05ERR,Error Code,,DOUBLE,number
+101,UGABINV06INVSTATUS,Device Status,,DOUBLE,number
+102,UGABINV06ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+103,UGABINV06ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+104,UGABINV06DC1A,DC Current Input 1,A,DOUBLE,number
+105,UGABINV06DC1V,DC Voltage Input 1,V,DOUBLE,number
+106,UGABINV06DC1W,DC Power Input 1,W,DOUBLE,number
+107,UGABINV06ACW,Active Power Across all lines,W,DOUBLE,number
+108,UGABINV06ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+109,UGABINV06ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+110,UGABINV06ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+111,UGABINV06ACL1A,Grid Current L1,A,DOUBLE,number
+112,UGABINV06ACL2A,Grid Current L2,A,DOUBLE,number
+113,UGABINV06ACL3A,Grid Current L3,A,DOUBLE,number
+114,UGABINV06ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+115,UGABINV06DC2A,DC Current Input 2,I,DOUBLE,number
+116,UGABINV06DC2V,DC Voltage Input 2,V,DOUBLE,number
+117,UGABINV06DC2W,DC Power Input 2,W,DOUBLE,number
+118,UGABINV06ERR,Error Code,,DOUBLE,number
+119,UGABINV07INVSTATUS,Device Status,,DOUBLE,number
+120,UGABINV07ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+121,UGABINV07ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+122,UGABINV07DC1A,DC Current Input 1,A,DOUBLE,number
+123,UGABINV07DC1V,DC Voltage Input 1,V,DOUBLE,number
+124,UGABINV07DC1W,DC Power Input 1,W,DOUBLE,number
+125,UGABINV07ACW,Active Power Across all lines,W,DOUBLE,number
+126,UGABINV07ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+127,UGABINV07ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+128,UGABINV07ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+129,UGABINV07ACL1A,Grid Current L1,A,DOUBLE,number
+130,UGABINV07ACL2A,Grid Current L2,A,DOUBLE,number
+131,UGABINV07ACL3A,Grid Current L3,A,DOUBLE,number
+132,UGABINV07ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+133,UGABINV07DC2A,DC Current Input 2,I,DOUBLE,number
+134,UGABINV07DC2V,DC Voltage Input 2,V,DOUBLE,number
+135,UGABINV07DC2W,DC Power Input 2,W,DOUBLE,number
+136,UGABINV07ERR,Error Code,,DOUBLE,number
+137,UGABINV08INVSTATUS,Device Status,,DOUBLE,number
+138,UGABINV08ACBKRSTATUS,Utility Grid Contactor State,BOOL,DOUBLE,number
+139,UGABINV08ACLIFEKWH,Energy Inception to Date,kWh,DOUBLE,number
+140,UGABINV08DC1A,DC Current Input 1,A,DOUBLE,number
+141,UGABINV08DC1V,DC Voltage Input 1,V,DOUBLE,number
+142,UGABINV08DC1W,DC Power Input 1,W,DOUBLE,number
+143,UGABINV08ACW,Active Power Across all lines,W,DOUBLE,number
+144,UGABINV08ACL1V,Grid Voltage L1 to N,V,DOUBLE,number
+145,UGABINV08ACL2V,Grid Voltage L2 to N,V,DOUBLE,number
+146,UGABINV08ACL3V,Grid Voltage L3 to N,V,DOUBLE,number
+147,UGABINV08ACL1A,Grid Current L1,A,DOUBLE,number
+148,UGABINV08ACL2A,Grid Current L2,A,DOUBLE,number
+149,UGABINV08ACL3A,Grid Current L3,A,DOUBLE,number
+150,UGABINV08ACVAR,Reactive Power across all lines,Var,DOUBLE,number
+151,UGABINV08DC2A,DC Current Input 2,I,DOUBLE,number
+152,UGABINV08DC2V,DC Voltage Input 2,V,DOUBLE,number
+153,UGABINV08DC2W,DC Power Input 2,W,DOUBLE,number
+154,UGABINV08ERR,Error Code,,DOUBLE,number
+155,UGABPOAREFTEMP,Reference Cell REF01: Temperature Value - from Logger,ºC,DOUBLE,number
+156,UGABMOD1TEMP,Temperature Transmitter TEMOD01: Module Temperature Value - from Logger,ºC,DOUBLE,number
+157,UGABMOD2TEMP,Temperature Transmitter TEMOD02: Module Temperature Value - from Logger,ºC,DOUBLE,number

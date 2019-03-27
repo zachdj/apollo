@@ -1,0 +1,99 @@
+index,label,description,units,sql_datatype,chart_datatype
+1,TIMESTAMP,Unix integer timestamp,s,INTEGER,datetime
+2,YEAR,Year of the observation,,INTEGER,number
+3,MONTH,Month (1-12) of the observation,,INTEGER,number
+4,DAY,Day of the month,,INTEGER,number
+5,HOUR,Hour (0-23) of the observation,,INTEGER,number
+6,MINUTE,Minute of the Hour (0-59),,INTEGER,number
+7,DAYOFYEAR,Day of the Year,,INTEGER,number
+8,CODE1,System Code 1 (not used in database),,DOUBLE,number
+9,CODE2,System Code 2 (not used in database),,DOUBLE,number
+10,CODE3,System Code 3 (not used in database),,DOUBLE,number
+11,UGAATRACKER01AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+12,UGAATRACKER01ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+13,UGAATRACKER01AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+14,UGAATRACKER01AZMSPDEGB,Elevation Setpoint,deg,DOUBLE,number
+15,UGAATRACKER02AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+16,UGAATRACKER02ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+17,UGAATRACKER02AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+18,UGAATRACKER02ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+19,UGAATRACKER03AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+20,UGAATRACKER03ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+21,UGAATRACKER03AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+22,UGAATRACKER03ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+23,UGAATRACKER04AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+24,UGAATRACKER04ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+25,UGAATRACKER04AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+26,UGAATRACKER04ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+27,UGAATRACKER05AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+28,UGAATRACKER05ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+29,UGAATRACKER05AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+30,UGAATRACKER05ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+31,UGAATRACKER06AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+32,UGAATRACKER06ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+33,UGAATRACKER06AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+34,UGAATRACKER06ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+35,UGAATRACKER07AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+36,UGAATRACKER07ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+37,UGAATRACKER07AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+38,UGAATRACKER07ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+39,UGAATRACKER08AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+40,UGAATRACKER08ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+41,UGAATRACKER08AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+42,UGAATRACKER08ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+43,UGAATRACKER09AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+44,UGAATRACKER09ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+45,UGAATRACKER09AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+46,UGAATRACKER09ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+47,UGAATRACKER10AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+48,UGAATRACKER10ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+49,UGAATRACKER10AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+50,UGAATRACKER10ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+51,UGAATRACKER11AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+52,UGAATRACKER11ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+53,UGAATRACKER11AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+54,UGAATRACKER11ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+55,UGAATRACKER12AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+56,UGAATRACKER12ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+57,UGAATRACKER12AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+58,UGAATRACKER12ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+59,UGAATRACKER13AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+60,UGAATRACKER13ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+61,UGAATRACKER13AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+62,UGAATRACKER13ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+63,UGAATRACKER14AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+64,UGAATRACKER14ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+65,UGAATRACKER14AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+66,UGAATRACKER14ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+67,UGAATRACKER15AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+68,UGAATRACKER15ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+69,UGAATRACKER15AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+70,UGAATRACKER15ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+71,UGAATRACKER16AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+72,UGAATRACKER16ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+73,UGAATRACKER16AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+74,UGAATRACKER16ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+75,UGAATRACKER17AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+76,UGAATRACKER17ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+77,UGAATRACKER17AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+78,UGAATRACKER17ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+79,UGAATRACKER18AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+80,UGAATRACKER18ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+81,UGAATRACKER18AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+82,UGAATRACKER18ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+83,UGAATRACKER19AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+84,UGAATRACKER19ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+85,UGAATRACKER19AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+86,UGAATRACKER19ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+87,UGAATRACKER20AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+88,UGAATRACKER20ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+89,UGAATRACKER20AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+90,UGAATRACKER20ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+91,UGAATRACKER21AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+92,UGAATRACKER21ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+93,UGAATRACKER21AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+94,UGAATRACKER21ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
+95,UGAATRACKER22AZMPOSDEG,Current Azimuth Angle,deg,DOUBLE,number
+96,UGAATRACKER22ELEVPOSDEG,Current Elevation Angle,deg,DOUBLE,number
+97,UGAATRACKER22AZMSPDEG,Azimuth Setpoint,deg,DOUBLE,number
+98,UGAATRACKER22ELEVSPDEG,Elevation Setpoint,deg,DOUBLE,number
