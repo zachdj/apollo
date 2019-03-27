@@ -29,85 +29,86 @@ import apollo.storage as storage
 
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
-app_config = {
-    'HTML_DIR': storage.get('assets/html'),
-    'DB_DIR': storage.get('GA-POWER'),
-    'DB_FILE': storage.get('GA-POWER') / 'solar_farm.sqlite',
-}
 
+def setup_app(html_dir=storage.get('assets/html'),
+              db_dir=storage.get('GA-POWER'),
+              db_file=storage.get('GA-POWER') / 'solar_farm.sqlite',
+              db_url='/solar',
+              html_url='/html'):
+    app = Flask(__name__)
+    preproc_handler = handlers.SolarDBRequestHandler(db_file)
+    postproc_handler = handlers.SolarDBRequestHandlerPostProcessing(db_file)
 
-def handle_bad_request(e):
-    logger.error(str(e))
-    traceback.print_exc()
-    return f'Bad Request: {e}', 400
+    def handle_bad_request(e):
+        logger.error(str(e))
+        traceback.print_exc()
+        return f'Bad Request: {e}', 400
 
+    app.register_error_handler(400, handle_bad_request)
 
-app.register_error_handler(400, handle_bad_request)
+    def solar_query():
+        try:
+            groupby = request.args.get(cfg.QUERY_GROUPBY_KEY, "")
+            if groupby in cfg.USE_PROC:
+                return postproc_handler.handle_request(request)
+            else:
+                return preproc_handler.handle_request(request)
+        except Exception as e:
+            return handle_bad_request(e)
 
+    @app.route("/status")
+    def get_status():
+        try:
+            return jsonify({"status": 1})
+        except Exception as e:
+            return handle_bad_request(e)
 
-def solar_query():
-    try:
-        groupby = request.args.get(cfg.QUERY_GROUPBY_KEY, "")
-        if groupby in cfg.USE_PROC:
-            handler = handlers.SolarDBRequestHandlerPostProcessing()
-        else:
-            handler = handlers.SolarDBRequestHandler()
-        return handler.handle_request(request,
-                                      dbfile=str(app_config['DB_FILE']))
-    except Exception as e:
-        return handle_bad_request(e)
-
-
-@app.route("/status")
-def get_status():
-    try:
-        return jsonify({"status":1})
-    except Exception as e:
-        return handle_bad_request(e)
-
-
-@app.route('/tables')
-def get_tables():
-    dbh = None
-    try:
-        source = request.args.get('source', None)
-        dbh = dbapi.DBHandler(app_config['DB_DIR'] / source)
-        dbh.connect()
-        tables = dbh.tables()
-        dbh.close()
-        return jsonify(tables)
-    except Exception as e:
-        if dbh:
+    @app.route('/tables')
+    def get_tables():
+        dbh = None
+        try:
+            source = request.args.get('source', None)
+            dbh = dbapi.DBHandler(Path(db_dir) / source)
+            dbh.connect()
+            tables = dbh.tables()
             dbh.close()
-        return handle_bad_request(e)
+            return jsonify(tables)
+        except Exception as e:
+            if dbh:
+                dbh.close()
+            return handle_bad_request(e)
 
+    @app.route('/sources')
+    def get_sources():
+        try:
+            sources = [f for f in os.listdir(db_dir)
+                       if f.endswith('.db') or f.endswith('.sqlite')]
+            return jsonify(sources)
+        except Exception as e:
+            return handle_bad_request(e)
 
-@app.route('/sources')
-def get_sources():
-    try:
-        sources = [f for f in os.listdir(app_config['DB_DIR'])
-                   if f.endswith('.db') or f.endswith('.sqlite')]
-        return jsonify(sources)
-    except Exception as e:
-        return handle_bad_request(e)
-
-
-@app.route('/columns')
-def get_columns():
-    dbh = None
-    try:
-        source = request.args.get('source', None)
-        table = request.args.get('table', None)
-        dbh = dbapi.DBHandler(app_config['DB_DIR'] / source)
-        dbh.connect()
-        columns = dbh.column_names(table)
-        dbh.close()
-        return jsonify(columns)
-    except Exception as e:
-        if dbh:
+    @app.route('/columns')
+    def get_columns():
+        dbh = None
+        try:
+            source = request.args.get('source', None)
+            table = request.args.get('table', None)
+            dbh = dbapi.DBHandler(Path(db_dir) / source)
+            dbh.connect()
+            columns = dbh.column_names(table)
             dbh.close()
-        return handle_bad_request(e)
+            return jsonify(columns)
+        except Exception as e:
+            if dbh:
+                dbh.close()
+            return handle_bad_request(e)
+
+    app.add_url_rule(db_url, 'solar_query', solar_query)
+    app.add_url_rule(
+        f'{html_url}/<path:path>', 'send_files',
+        lambda path: send_from_directory(html_dir, path))
+
+    return app
 
 
 def strip_quotes(string):
@@ -128,11 +129,11 @@ def main():
         type=int, default=5000,
         help='The port the server should listen on.')
     parser.add_argument(
-        '--html', metavar='HTML_DIR', dest='html',
+        '--html', metavar='HTML_DIR', dest='html_dir',
         type=str, default=storage.get('assets/html'),
         help='The directory for html and other static files to be served.')
     parser.add_argument(
-        '--schemas', metavar='SCHEMAS_DIR', dest='schemas',
+        '--schemas', metavar='SCHEMAS_DIR', dest='schemas_dir',
         type=str, default=storage.get('assets/schemas'),
         help='The directory storing the JSON description '
              'of the database schema.')
@@ -145,11 +146,11 @@ def main():
         type=str, default=storage.get('GA-POWER') / 'solar_farm.sqlite',
         help='The default database file to use.')
     parser.add_argument(
-        '--dburl', metavar='dburl', dest='dburl',
+        '--dburl', metavar='dburl', dest='db_url',
         type=str, default='/solar',
         help='The URL to bind to database queries.')
     parser.add_argument(
-        '--htmlurl', metavar='htmlurl', dest='htmlurl',
+        '--htmlurl', metavar='htmlurl', dest='html_url',
         type=str, default='/html',
         help='The URL to bind to static (html) queries.')
     parser.add_argument(
@@ -162,18 +163,22 @@ def main():
                         style='{', level=args.log)
     logger.setLevel(args.log)
 
-    logging.info(f'Starting Apollo server with config:\n{vars(args)}')
+    config_string = '\n'.join(
+        [f'{key}: {val}' for key, val in vars(args).items()])
+    logging.info(f'Starting Apollo server with config: \n{config_string}')
 
-    app_config['HTML_DIR'] = Path(strip_quotes(args.html))
-    app_config['DB_DIR'] = Path(strip_quotes(args.db_dir))
-    app_config['DB_FILE'] = Path(strip_quotes(args.db_file))
+    html_dir = Path(strip_quotes(args.html_dir))
+    db_dir = Path(strip_quotes(args.db_dir))
+    db_file = Path(strip_quotes(args.db_file))
 
-    cfg.SCHEMA_DIR = Path(strip_quotes(args.schemas))
+    app = setup_app(html_dir=html_dir,
+                    db_dir=db_dir,
+                    db_file=db_file,
+                    db_url=args.db_url,
+                    html_url=args.html_url)
 
-    app.add_url_rule(args.dburl, 'solar_query', solar_query)
-    app.add_url_rule(
-        f'{args.htmlurl}/<path:path>', 'send_files',
-        lambda path: send_from_directory(app_config['HTML_DIR'], path))
+    # TODO: refactor this so we don't use cfg module
+    cfg.SCHEMA_DIR = Path(strip_quotes(args.schemas_dir))
 
     index_url = f'http://{args.host}:{args.port}/html/solar/start.html'
     try:
