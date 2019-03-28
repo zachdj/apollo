@@ -24,13 +24,6 @@ def rmse(y_true, y_pred, **kwargs):
 _default_metrics = (mae, mse, rmse, r2)
 
 
-knn_regressor = KNeighborsRegressor(**{
-    'n_neighbors': 5,
-    'weights': 'distance',
-})
-
-
-
 MODELS = {
     'Linear Regression': LinearRegression(),
     'Support Vector Regression': scikit_SVR(**{

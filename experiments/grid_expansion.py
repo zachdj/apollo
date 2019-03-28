@@ -43,21 +43,7 @@ def run(first='2017-01-01', last='2018-12-31',
             splitter = TimeSeriesSplit(n_splits=folds)
             outpath = pathlib.Path(output_dir / 'cross_val')
         else:
-            # create custom splitter with PredefinedSplit
-            test_pct = max(0, min(split_size, 1))
-            first = pd.Timestamp(first).floor(freq='6h')
-            last = pd.Timestamp(last).floor(freq='6h')
-            # total reftimes in the selected dataset
-            reftime_count = (last - first) // pd.Timedelta(6, 'h')
-
-            # create index for PredefinedSplit
-            testing_count = floor(reftime_count * test_pct)
-            training_count = reftime_count - testing_count
-            test_fold = np.concatenate((
-                np.ones(training_count) * -1,  # -1 indicates training set
-                np.zeros(testing_count)  # 0 indicates testing set, 1st fold
-            ))
-            splitter = PredefinedSplit(test_fold)
+            splitter = TimeSeriesSplit(n_splits=2)
             outpath = pathlib.Path(output_dir / 'split')
 
         rf_results = rf.validate(first=first, last=last,
