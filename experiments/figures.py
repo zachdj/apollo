@@ -49,7 +49,7 @@ def _irr_vs_hour(start, stop, output):
                        color='b', alpha=opacity, label='Array E')
     axes.set_xticks(range(1, 25))
     axes.set_xlabel('Hour (EST)')
-    axes.set_ylabel('Mean Irradiance (watts / m$^2$)')
+    axes.set_ylabel('Mean Irradiance (W / m$^2$)')
     axes.legend()
 
     # set size and font sizes
@@ -104,7 +104,7 @@ def _irr_vs_month(start, stop, output):
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ))
     axes.set_xlabel('Month')
-    axes.set_ylabel('Mean Irradiance (watts / m$^2$)')
+    axes.set_ylabel('Mean Irradiance (W / m$^2$)')
     axes.legend()
 
     # set size and font sizes
@@ -147,7 +147,7 @@ def _irr_correlations(start, stop, output):
 
     cloud_cover_var = 'TCC_EATM'
     air_temp_var = 'TMP_SFC'
-    downward_flux_var = 'DLWRF_SFC'
+    downward_flux_var = 'DSWRF_SFC'
     cloud_cover_ds = SolarDataset(
         start=start, stop=stop, target=None, forecast=0,
         feature_subset=(cloud_cover_var, air_temp_var, downward_flux_var),
@@ -182,7 +182,7 @@ def _irr_correlations(start, stop, output):
 
     axes.set_title('Irradiance at 2PM EST vs. Total Cloud Cover')
     axes.set_xlabel('Cloud Cover (%)')
-    axes.set_ylabel('Irradiance (watts / m$^2$)')
+    axes.set_ylabel('Irradiance (W / m$^2$)')
     axes.set_xticks(np.arange(0, 110, 10))
     axes.legend()
 
@@ -211,7 +211,7 @@ def _irr_correlations(start, stop, output):
 
     axes.set_title('Irradiance at 2PM EST vs. Surface Air Temperature')
     axes.set_xlabel('Air Tempurature (Kelvin)')
-    axes.set_ylabel('Irradiance (watts / m$^2$)')
+    axes.set_ylabel('Irradiance (W / m$^2$)')
     axes.legend()
 
     # set size and font sizes
@@ -237,9 +237,9 @@ def _irr_correlations(start, stop, output):
         axes.plot((min_x, max_x), line_endpoints,
                   f'--{colors[idx]}', label='Trend Line')
 
-    axes.set_title('Irradiance at 2PM EST vs. Downwelling Longwave Flux')
-    axes.set_xlabel('Downwelling Longwave Flux (watts / m$^2$)')
-    axes.set_ylabel('Irradiance (watts / m$^2$)')
+    axes.set_title('Irradiance at 2PM EST vs. Downwelling Shortwave Flux')
+    axes.set_xlabel('Downwelling Longwave Flux (W / m$^2$)')
+    axes.set_ylabel('Irradiance (W / m$^2$)')
     axes.legend()
 
     # set size and font sizes
