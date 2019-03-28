@@ -107,6 +107,6 @@ def run(first='2017-01-01', last='2018-12-31',
             for metric in scores:
                 scores_df[metric] = scores[metric]
 
-            outfile = outpath / f'{model_name}.csv'
+            outfile = outpath / f'{model_name}_{shape_string}.csv'
             print(f'*** Writing results to {outfile} ***')
             scores_df.to_csv(str(outfile), index_label='Target Hour')
