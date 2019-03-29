@@ -26,13 +26,13 @@ def _irr_vs_hour(start, stop, output):
 
     # we convert from utc to est hour
     query = f' SELECT (HOUR + 20)%24 + 1 as hour,' \
-            f' AVG(UGAAPOA1IRR) as Array_A,' \
-            f' AVG(UGABPOA1IRR) as Array_B,' \
-            f' AVG(UGAEPOA1IRR) as Array_E' \
-            f' FROM IRRADIANCE WHERE timestamp' \
-            f' BETWEEN {unix_start} AND {unix_stop}' \
-            f' GROUP BY HOUR' \
-            f' ORDER BY HOUR;'
+        f' AVG(UGAAPOA1IRR) as Array_A,' \
+        f' AVG(UGABPOA1IRR) as Array_B,' \
+        f' AVG(UGAEPOA1IRR) as Array_E' \
+        f' FROM IRRADIANCE WHERE timestamp' \
+        f' BETWEEN {unix_start} AND {unix_stop}' \
+        f' GROUP BY HOUR' \
+        f' ORDER BY HOUR;'
 
     # lod data into df
     df = pd.read_sql_query(sql=query, con=connection, index_col='hour')
@@ -75,13 +75,13 @@ def _irr_vs_month(start, stop, output):
 
     # we convert from utc to est hour
     query = f' SELECT MONTH as month, ' \
-            f' AVG(UGAAPOA1IRR) as Array_A,' \
-            f' AVG(UGABPOA1IRR) as Array_B,' \
-            f' AVG(UGAEPOA1IRR) as Array_E' \
-            f' FROM IRRADIANCE WHERE timestamp' \
-            f' BETWEEN {unix_start} AND {unix_stop}' \
-            f' GROUP BY month' \
-            f' ORDER BY month;'
+        f' AVG(UGAAPOA1IRR) as Array_A,' \
+        f' AVG(UGABPOA1IRR) as Array_B,' \
+        f' AVG(UGAEPOA1IRR) as Array_E' \
+        f' FROM IRRADIANCE WHERE timestamp' \
+        f' BETWEEN {unix_start} AND {unix_stop}' \
+        f' GROUP BY month' \
+        f' ORDER BY month;'
 
     # lod data into df
     df = pd.read_sql_query(sql=query, con=connection, index_col='month')
@@ -116,7 +116,33 @@ def _irr_vs_month(start, stop, output):
     plt.close(fig)
 
 
-def _irr_correlations(start, stop, output):
+def _irr_correlations(start, stop, output,
+                      data_vars=(
+                              'TCC_EATM',
+                              'TMP_SFC',
+                              'DSWRF_SFC',
+                              'DLWRF_SFC',
+                              'PRES_SFC',
+                              'LHTFL_SFC',
+                              'VIS_SFC'),
+                      data_var_labels=(
+                              'Total Cloud Cover',
+                              'Surface Air Temperature',
+                              'Downwelling Shortwave Flux',
+                              'Downwelling Longwave Flux',
+                              'Air Pressure',
+                              'Upward Latent Heat Flux',
+                              'Visibility'),
+                      data_var_units=(
+                              '%',
+                              'K',
+                              'W m$^{-2}$',
+                              'W m$^{-2}$',
+                              'Pa',
+                              'W m$^{-2}$',
+                              'm'),
+                      colors=('r', 'g', 'b'),
+                      alpha=0.5):
     start, stop = pd.Timestamp(start), pd.Timestamp(stop)
 
     # select targets
@@ -129,13 +155,13 @@ def _irr_correlations(start, stop, output):
     unix_stop = stop.value / 10 ** 9
 
     targets_query = f' SELECT TIMESTAMP as reftime, ' \
-                    f' AVG(UGAAPOA1IRR) as Array_A,' \
-                    f' AVG(UGABPOA1IRR) as Array_B,' \
-                    f' AVG(UGAEPOA1IRR) as Array_E ' \
-                    f' FROM IRRADIANCE WHERE reftime' \
-                    f' BETWEEN {unix_start} AND {unix_stop} ' \
-                    f' AND hour=18 ' \
-                    f' GROUP BY hour, day, month, year;'
+        f' AVG(UGAAPOA1IRR) as Array_A,' \
+        f' AVG(UGABPOA1IRR) as Array_B,' \
+        f' AVG(UGAEPOA1IRR) as Array_E ' \
+        f' FROM IRRADIANCE WHERE reftime' \
+        f' BETWEEN {unix_start} AND {unix_stop} ' \
+        f' AND hour=18 ' \
+        f' GROUP BY hour, day, month, year;'
     # load data and aggregate by hour
     targets_ds = pd.read_sql_query(sql=targets_query, con=connection,
                                    index_col='reftime', parse_dates=['reftime'])
@@ -145,113 +171,57 @@ def _irr_correlations(start, stop, output):
     targets_ds.index.name = 'reftime'
     targets_ds = targets_ds.to_xarray()
 
-    cloud_cover_var = 'TCC_EATM'
-    air_temp_var = 'TMP_SFC'
-    downward_flux_var = 'DSWRF_SFC'
-    cloud_cover_ds = SolarDataset(
-        start=start, stop=stop, target=None, forecast=0,
-        feature_subset=(cloud_cover_var, air_temp_var, downward_flux_var),
-        temporal_features=False, geo_shape=(1,1), standardize=False,
-        target_hours=0).xrds
+    weather_var_ds = SolarDataset(
+        start=start, stop=stop, target=None, target_hours=0, forecast=0,
+        feature_subset=data_vars, temporal_features=False,
+        geo_shape=(1,1), standardize=False).xrds
 
     # we have only selected data along the reftime coordinate
-    cloud_cover_ds = cloud_cover_ds.drop(
+    weather_var_ds = weather_var_ds.drop(
         labels=('x', 'y', 'lat', 'lon', 'forecast', 'z_EATM')).squeeze()
 
-    dataset = xr.merge([targets_ds, cloud_cover_ds], join='inner')
+    dataset = xr.merge([targets_ds, weather_var_ds], join='inner')
 
     array_a = dataset['Array_A'].values
     array_b = dataset['Array_B'].values
     array_e = dataset['Array_E'].values
 
-    # plot irradiance vs cloud cover
-    fig, axes = plt.subplots()
-    x = dataset[cloud_cover_var].values
-    axes.scatter(x, array_a, color='r', alpha=0.5, label='Array A')
-    axes.scatter(x, array_b, color='g', alpha=0.5, label='Array B')
-    axes.scatter(x, array_e, color='b', alpha=0.5, label='Array E')
+    # plot figures with trend lines
+    for data_var_idx, data_var in enumerate(data_vars):
+        print(f'* Plotting {data_var}')
+        plt.cla()
+        fig, axes = plt.subplots()
+        x = dataset[data_var].values
+        axes.scatter(x, array_a, color=colors[0], alpha=alpha, label='Array A')
+        axes.scatter(x, array_b, color=colors[1], alpha=alpha, label='Array B')
+        axes.scatter(x, array_e, color=colors[2], alpha=alpha, label='Array E')
 
-    # plot trend lines
-    colors = ('r', 'g', 'b')
-    for idx, values in enumerate([array_a, array_b, array_e]):
-        slope, intercept, *rest = linregress(x, values)
-        min_x, max_x = min(x), max(x)
-        line_endpoints = min_x*slope + intercept, max_x*slope + intercept
-        axes.plot((min_x, max_x), line_endpoints,
-                  f'--{colors[idx]}', label='Trend Line')
+        # trend line
+        for idx, values in enumerate([array_a, array_b, array_e]):
+            slope, intercept, *_unused = linregress(x, values)
+            min_x, max_x = min(x), max(x)
+            line_endpoints = min_x*slope + intercept, max_x*slope + intercept
+            axes.plot((min_x, max_x), line_endpoints,
+                      f'--{colors[idx]}', label='Trend Line')
 
-    axes.set_title('Irradiance at 2PM EST vs. Total Cloud Cover')
-    axes.set_xlabel('Cloud Cover (%)')
-    axes.set_ylabel('Irradiance (W / m$^2$)')
-    axes.set_xticks(np.arange(0, 110, 10))
-    axes.legend()
+        axes.set_title(
+            f'Irradiance at 2PM EST vs. {data_var_labels[data_var_idx]}')
+        axes.set_xlabel(
+            f'{data_var_labels[data_var_idx]} ({data_var_units[data_var_idx]})')
+        axes.set_ylabel('Irradiance (W m$^{-2}$)')
+        if data_var_units[data_var_idx] == '%':
+            axes.set_xticks(np.arange(0, 110, 10))
+        axes.legend()
 
-    # set size and font sizes
-    fig.set_size_inches(10, 6)
-    axes.title.set_fontsize(16)
-    axes.xaxis.label.set_fontsize(14)
-    axes.yaxis.label.set_fontsize(14)
-    plt.savefig(str(output / 'irr_vs_clouds.png'))
-
-    # plot irradiance vs air temperature
-    plt.cla()
-    x = dataset[air_temp_var].values
-    axes.scatter(x, array_a, color='r', label='Array A')
-    axes.scatter(x, array_b, color='g', label='Array B')
-    axes.scatter(x, array_e, color='b', label='Array E')
-
-    # plot trend lines
-    colors = ('r', 'g', 'b')
-    for idx, values in enumerate([array_a, array_b, array_e]):
-        slope, intercept, *rest = linregress(x, values)
-        min_x, max_x = min(x), max(x)
-        line_endpoints = min_x*slope + intercept, max_x*slope + intercept
-        axes.plot((min_x, max_x), line_endpoints,
-                  f'--{colors[idx]}', label='Trend Line')
-
-    axes.set_title('Irradiance at 2PM EST vs. Surface Air Temperature')
-    axes.set_xlabel('Air Tempurature (Kelvin)')
-    axes.set_ylabel('Irradiance (W / m$^2$)')
-    axes.legend()
-
-    # set size and font sizes
-    fig.set_size_inches(10, 6)
-    axes.title.set_fontsize(16)
-    axes.xaxis.label.set_fontsize(14)
-    axes.yaxis.label.set_fontsize(14)
-    plt.savefig(str(output / 'irr_vs_temp.png'))
-
-    # plot irradiance vs air temperature
-    plt.cla()
-    x = dataset[downward_flux_var].values
-    axes.scatter(x, array_a, color='r', label='Array A')
-    axes.scatter(x, array_b, color='g', label='Array B')
-    axes.scatter(x, array_e, color='b', label='Array E')
-
-    # plot trend lines
-    colors = ('r', 'g', 'b')
-    for idx, values in enumerate([array_a, array_b, array_e]):
-        slope, intercept, *rest = linregress(x, values)
-        min_x, max_x = min(x), max(x)
-        line_endpoints = min_x*slope + intercept, max_x*slope + intercept
-        axes.plot((min_x, max_x), line_endpoints,
-                  f'--{colors[idx]}', label='Trend Line')
-
-    axes.set_title('Irradiance at 2PM EST vs. Downwelling Shortwave Flux')
-    axes.set_xlabel('Downwelling Longwave Flux (W / m$^2$)')
-    axes.set_ylabel('Irradiance (W / m$^2$)')
-    axes.legend()
-
-    # set size and font sizes
-    fig.set_size_inches(10, 6)
-    axes.title.set_fontsize(16)
-    axes.xaxis.label.set_fontsize(14)
-    axes.yaxis.label.set_fontsize(14)
-    plt.savefig(str(output / 'irr_vs_flux.png'))
-    plt.close(fig)
+        # set size and font sizes
+        fig.set_size_inches(10, 6)
+        axes.title.set_fontsize(16)
+        axes.xaxis.label.set_fontsize(14)
+        axes.yaxis.label.set_fontsize(14)
+        plt.savefig(str(output / f'irr_vs_{data_var}.png'))
 
 
-def run(output='./output/figures', first='2017-01-01', last='2018-12-31'):
+def run(output='./results/figures', first='2017-01-01', last='2018-12-31'):
     outpath = pathlib.Path(output).resolve()
     outpath.mkdir(parents=True, exist_ok=True)
 
