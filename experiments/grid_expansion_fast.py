@@ -44,6 +44,7 @@ MODELS = {
 
 
 def run(first='2017-01-01', last='2018-12-31',
+        target=_default_target,
         metrics=_default_metrics,
         method='cv', folds=5,
         output='./results/grid_fast'):
@@ -65,7 +66,7 @@ def run(first='2017-01-01', last='2018-12-31',
         print('Loading dataset')
         ds = SolarDataset(
             first, last, geo_shape=shape,
-            target=_default_target, target_hours=_default_target_hours)
+            target=target, target_hours=_default_target_hours)
         x, y = ds.tabular()
         x = np.asarray(x)
         y = np.asarray(y)
@@ -73,10 +74,10 @@ def run(first='2017-01-01', last='2018-12-31',
         if method == 'cv':
             # use a time-series splitter
             splitter = TimeSeriesSplit(n_splits=folds)
-            outpath = pathlib.Path(output_dir / f'{_default_target}/cross_val/')
+            outpath = pathlib.Path(output_dir / f'{target}/cross_val/')
         else:
             splitter = TimeSeriesSplit(n_splits=2)
-            outpath = pathlib.Path(output_dir / f'{_default_target}/split')
+            outpath = pathlib.Path(output_dir / f'{target}/split')
 
         outpath = outpath.resolve()
         outpath.mkdir(parents=True, exist_ok=True)
