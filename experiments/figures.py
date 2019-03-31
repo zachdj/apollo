@@ -10,7 +10,9 @@ import sqlite3
 import xarray as xr
 
 from apollo.datasets.solar import SolarDataset
+from apollo.datasets.nam import open_range
 import apollo.storage
+from apollo.viz import nam_map, date_heatmap_figure
 
 
 def _irr_vs_hour(start, stop, output):
@@ -221,15 +223,48 @@ def _irr_correlations(start, stop, output,
         plt.savefig(str(output / f'irr_vs_{data_var}.png'))
 
 
-def run(output='./results/figures', first='2017-01-01', last='2018-12-31'):
+def data_availability(start='2017-01-01', stop='2018-12-31',
+                      output='./results/figures'):
+    ds = SolarDataset(start=start, stop=stop,
+                      target=None, target_hours=0, forecast=0,
+                      feature_subset=('DSWRF_SFC',), temporal_features=False,
+                      geo_shape=(1,1), standardize=False).xrds
+
+    ds = ds.drop(
+        labels=('x', 'y', 'lat', 'lon', 'forecast', 'z_SFC')
+    ).squeeze().to_dataframe()
+    series = pd.Series(index=ds.index, data=np.ones(len(ds.index)).astype(np.int))
+    outpath = pathlib.Path(output) / 'heatmap.png'
+    fig = date_heatmap_figure(series=series, cmap='Blues', savefig=str(outpath))
+
+
+def nam_heatmap(start='2017-06-01 T18:00:00',
+                output='./results/figures', target_var='DSWRF_SFC'):
+    ds = open_range(start=start, stop=pd.Timestamp(start) + pd.Timedelta(6, 'h'))
+    fig = nam_map(xrds=ds, feature=target_var, reftime=0, forecast=0,
+                  title='')
+    for ax in fig.axes:
+        ax.set_ylabel('Downwelling Shortwave Flux (W m$^{-2}$)')
+
+    outpath = pathlib.Path(output) / 'nam_map.png'
+    plt.savefig(str(outpath))
+
+
+def run(first='2017-01-01', last='2018-12-31',
+        output='./results/figures', figure_set='all'):
     outpath = pathlib.Path(output).resolve()
     outpath.mkdir(parents=True, exist_ok=True)
 
     matplotlib_settings('font', family='normal', size=12)
 
-    _irr_vs_hour(start=first, stop=last, output=outpath)
-    _irr_vs_month(start=first, stop=last, output=outpath)
-    _irr_correlations(start=first, stop=last, output=outpath)
+    if figure_set == 'irr' or figure_set == 'all':
+        _irr_vs_hour(start=first, stop=last, output=outpath)
+        _irr_vs_month(start=first, stop=last, output=outpath)
+        _irr_correlations(start=first, stop=last, output=outpath)
+
+    if figure_set == 'heatmaps' or figure_set == 'all':
+        data_availability(start=first, stop=last, output=outpath)
+        nam_heatmap(start=first, output=outpath)
 
 
 if __name__ == '__main__':
