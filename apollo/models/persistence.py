@@ -1,5 +1,3 @@
-import abc
-import numpy as np
 import pandas as pd
 import pathlib
 import pickle
@@ -16,12 +14,10 @@ class PersistenceModel(Model):
         ''' Initialize a PersistenceModel
 
         Args:
-            data_kwargs (dict or None):
-                kwargs to be passed to the SolarDataset constructor
-            model_kwargs (dict or None):
-                kwargs used to specify model behavior
+            name (str):
+                A descriptive name for the model.
             **kwargs:
-                other kwargs used for model initialization, such as model name
+                A set of keyword arguments to forward to the data loader
         '''
         ts = pd.Timestamp('now')
 
@@ -56,7 +52,7 @@ class PersistenceModel(Model):
     @classmethod
     def load(cls, path):
         name = path.name
-        with open(path / 'kwargs.pickle', 'rb') as kwargs_file:
+        with open(pathlib.Path(path) / 'kwargs.pickle', 'rb') as kwargs_file:
             kwargs = pickle.load(kwargs_file)
         model = cls(name=name, **kwargs)
 
@@ -64,7 +60,7 @@ class PersistenceModel(Model):
 
     def save(self, path):
         # serialize kwargs
-        with open(path / 'kwargs.pickle', 'wb') as outfile:
+        with open(pathlib.Path(path) / 'kwargs.pickle', 'wb') as outfile:
             pickle.dump(self.kwargs, outfile)
 
     def fit(self, first, last):
