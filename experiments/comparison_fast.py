@@ -30,7 +30,7 @@ MODELS = {
     'Support Vector Regression': scikit_SVR(**{
         'C': 1.4,
         'epsilon': 0.6,
-        'kernel': 'sigmoid',
+        'kernel': 'rbf',
         'gamma': 0.001
     }),
     'KNN': KNeighborsRegressor(**{
