@@ -42,7 +42,6 @@ def _irr_vs_hour(start, stop, output):
 
     fig, axes = plt.subplots()
     opacity = 0.6
-    axes.set_title('Mean Irradiance vs Time-of-Day')
     line1, = axes.plot(df.index, df['Array_A'],
                        color='r', alpha=opacity, label='Array A')
     line2, = axes.plot(df.index, df['Array_B'],
@@ -93,7 +92,6 @@ def _irr_vs_month(start, stop, output):
     opacity = 0.6
 
     fig, axes = plt.subplots()
-    axes.set_title('Mean Irradiance per Month')
     rects1 = axes.bar(df.index - bar_width, df['Array_A'], width=bar_width,
                       color='r', alpha=opacity, label='Array A')
     rects2 = axes.bar(df.index, df['Array_B'], width=bar_width,
@@ -206,8 +204,6 @@ def _irr_correlations(start, stop, output,
             axes.plot((min_x, max_x), line_endpoints,
                       f'--{colors[idx]}', label='Trend Line')
 
-        axes.set_title(
-            f'Irradiance at 2PM EST vs. {data_var_labels[data_var_idx]}')
         axes.set_xlabel(
             f'{data_var_labels[data_var_idx]} ({data_var_units[data_var_idx]})')
         axes.set_ylabel('Irradiance (W m$^{-2}$)')
