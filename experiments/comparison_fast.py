@@ -9,6 +9,7 @@ from sklearn.model_selection import TimeSeriesSplit
 from sklearn.svm import SVR as scikit_SVR
 from sklearn.linear_model import LinearRegression as LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
@@ -36,6 +37,16 @@ MODELS = {
         'n_neighbors': 5,
         'weights': 'distance',
     }),
+    'MLP': MLPRegressor(
+            hidden_layer_sizes=(57, 23),
+            activation='relu',
+            solver='adam',
+            batch_size=100,
+            learning_rate_init=0.003,
+            momentum=0.2,
+            max_iter=500,
+            random_state=123,
+    ),
     'Model Tree': DecisionTreeRegressor(**{
         'splitter': 'best',
         'max_depth': 20,
