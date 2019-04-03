@@ -20,7 +20,7 @@ def rmse(y_true, y_pred, **kwargs):
 
 
 _default_metrics = (mae, mse, rmse, r2)
-_default_target = 'UGABPOA1IRR'
+_default_target = 'UGAEPOA1IRR'
 _default_target_hours = np.arange(1, 25)
 
 
@@ -54,7 +54,7 @@ def run(first='2017-01-01', last='2018-12-31',
     first = pd.Timestamp(first).floor(freq='6h')
     last = pd.Timestamp(last).floor(freq='6h')
 
-    for shape in [(1, 1), (3, 3), (5, 5)]:
+    for shape in [(1, 1), (3, 3), (5, 5), (7, 7)]:
         shape_string = f'{shape[0]}x{shape[1]}'
         print(f'Running experiment for grid size {shape_string}')
         models = {
