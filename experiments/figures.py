@@ -200,7 +200,8 @@ def _irr_correlations(start, stop, output,
                               'W m$^{-2}$',
                               'm'),
                       colors=('r', 'g', 'b'),
-                      alpha=0.5):
+                      alpha=0.5,
+                      trend_lines=False):
     start, stop = pd.Timestamp(start), pd.Timestamp(stop)
 
     # select targets
@@ -249,17 +250,18 @@ def _irr_correlations(start, stop, output,
         plt.cla()
         fig, axes = plt.subplots()
         x = dataset[data_var].values
-        axes.scatter(x, array_a, color=colors[0], alpha=alpha, label='Array A')
-        axes.scatter(x, array_b, color=colors[1], alpha=alpha, label='Array B')
-        axes.scatter(x, array_e, color=colors[2], alpha=alpha, label='Array E')
+        axes.scatter(x, array_a, color=colors[0], alpha=alpha, label='Dual-axis')
+        axes.scatter(x, array_b, color=colors[1], alpha=alpha, label='Fixed')
+        axes.scatter(x, array_e, color=colors[2], alpha=alpha, label='Single-axis')
 
         # trend line
-        for idx, values in enumerate([array_a, array_b, array_e]):
-            slope, intercept, *_unused = linregress(x, values)
-            min_x, max_x = min(x), max(x)
-            line_endpoints = min_x*slope + intercept, max_x*slope + intercept
-            axes.plot((min_x, max_x), line_endpoints,
-                      f'--{colors[idx]}', label='Trend Line')
+        if trend_lines:
+            for idx, values in enumerate([array_a, array_b, array_e]):
+                slope, intercept, *_unused = linregress(x, values)
+                min_x, max_x = min(x), max(x)
+                line_endpoints = min_x*slope + intercept, max_x*slope + intercept
+                axes.plot((min_x, max_x), line_endpoints,
+                          f'--{colors[idx]}', label='Trend Line')
 
         axes.set_xlabel(
             f'{data_var_labels[data_var_idx]} ({data_var_units[data_var_idx]})')
