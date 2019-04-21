@@ -15,11 +15,36 @@ import apollo.storage
 from apollo.viz import nam_map, date_heatmap_figure
 
 
+class StandardDeviationAggregate:
+    '''Aggregate calculation of standard deviation for SQLite
+
+    Sourced from http://alexforencich.com/wiki/en/scripts/python/stdev
+    '''
+    def __init__(self):
+        self.M = 0.0
+        self.S = 0.0
+        self.k = 1
+
+    def step(self, value):
+        if value is None:
+            return
+        tM = self.M
+        self.M += (value - tM) / self.k
+        self.S += (value - tM) * (value - self.M)
+        self.k += 1
+
+    def finalize(self):
+        if self.k < 3:
+            return None
+        return np.sqrt(self.S / (self.k - 2))
+
+
 def _irr_vs_hour(start, stop, output):
     """ Plot mean irradiance vs hour-of-day on the given set of axes"""
     data_dir = apollo.storage.get('GA-POWER')
     path = data_dir / 'solar_farm.sqlite'
     connection = sqlite3.connect(str(path))
+    connection.create_aggregate("STDDEV", 1, StandardDeviationAggregate)
 
     start, stop = pd.Timestamp(start), pd.Timestamp(stop)
     # convert start and stop timestamps to unix epoch in seconds
@@ -30,7 +55,10 @@ def _irr_vs_hour(start, stop, output):
     query = f' SELECT (HOUR + 20)%24 + 1 as hour,' \
         f' AVG(UGAAPOA1IRR) as Array_A,' \
         f' AVG(UGABPOA1IRR) as Array_B,' \
-        f' AVG(UGAEPOA1IRR) as Array_E' \
+        f' AVG(UGAEPOA1IRR) as Array_E,' \
+        f' STDDEV(UGAAPOA1IRR) as Dev_A,' \
+        f' STDDEV(UGABPOA1IRR) as Dev_B,' \
+        f' STDDEV(UGAEPOA1IRR) as Dev_E' \
         f' FROM IRRADIANCE WHERE timestamp' \
         f' BETWEEN {unix_start} AND {unix_stop}' \
         f' GROUP BY HOUR' \
@@ -43,11 +71,18 @@ def _irr_vs_hour(start, stop, output):
     fig, axes = plt.subplots()
     opacity = 0.6
     line1, = axes.plot(df.index, df['Array_A'],
-                       color='r', alpha=opacity, label='Array A')
+                       color='r', alpha=opacity, label='Dual-axis')
     line2, = axes.plot(df.index, df['Array_B'],
-                       color='g', alpha=opacity, label='Array B')
+                       color='g', alpha=opacity, label='Fixed')
     line3, = axes.plot(df.index, df['Array_E'],
-                       color='b', alpha=opacity, label='Array E')
+                       color='b', alpha=opacity, label='Single-axis')
+    # plot std dev bars
+    axes.vlines(df.index, df['Array_A'] - 0.5 * df['Dev_A'], df['Array_A'] + 0.5 * df['Dev_A'],
+                linestyles='dashed', colors='r', label='Standard Deviation')
+    axes.vlines(df.index, df['Array_B'] - 0.5 * df['Dev_B'], df['Array_B'] + 0.5 * df['Dev_B'],
+                linestyles='dashed', colors='g', label='Standard Deviation')
+    axes.vlines(df.index, df['Array_E'] - 0.5 * df['Dev_E'], df['Array_E'] + 0.5 * df['Dev_E'],
+                linestyles='dashed', colors='b', label='Standard Deviation')
     axes.set_xticks(range(1, 25))
     axes.set_xlabel('Hour (EST)')
     axes.set_ylabel('Mean Irradiance (W / m$^2$)')
@@ -67,6 +102,7 @@ def _irr_vs_month(start, stop, output):
     data_dir = apollo.storage.get('GA-POWER')
     path = data_dir / 'solar_farm.sqlite'
     connection = sqlite3.connect(str(path))
+    connection.create_aggregate("STDDEV", 1, StandardDeviationAggregate)
 
     start, stop = pd.Timestamp(start), pd.Timestamp(stop)
 
@@ -78,7 +114,10 @@ def _irr_vs_month(start, stop, output):
     query = f' SELECT MONTH as month, ' \
         f' AVG(UGAAPOA1IRR) as Array_A,' \
         f' AVG(UGABPOA1IRR) as Array_B,' \
-        f' AVG(UGAEPOA1IRR) as Array_E' \
+        f' AVG(UGAEPOA1IRR) as Array_E,' \
+        f' STDDEV(UGAAPOA1IRR) as Dev_A,' \
+        f' STDDEV(UGABPOA1IRR) as Dev_B,' \
+        f' STDDEV(UGAEPOA1IRR) as Dev_E' \
         f' FROM IRRADIANCE WHERE timestamp' \
         f' BETWEEN {unix_start} AND {unix_stop}' \
         f' GROUP BY month' \
@@ -93,11 +132,23 @@ def _irr_vs_month(start, stop, output):
 
     fig, axes = plt.subplots()
     rects1 = axes.bar(df.index - bar_width, df['Array_A'], width=bar_width,
-                      color='r', alpha=opacity, label='Array A')
+                      color='r', alpha=opacity, label='Dual-axis')
     rects2 = axes.bar(df.index, df['Array_B'], width=bar_width,
-                      color='g', alpha=opacity, label='Array B')
+                      color='g', alpha=opacity, label='Fixed')
     rects3 = axes.bar(df.index + bar_width, df['Array_E'], width=bar_width,
-                      color='b', alpha=opacity, label='Array E')
+                      color='b', alpha=opacity, label='Single-axis')
+    axes.vlines(df.index - bar_width,
+                df['Array_A'] - 0.5 * df['Dev_A'],
+                df['Array_A'] + 0.5 * df['Dev_A'],
+                linestyles='dashed', colors='r', label='Standard Deviation')
+    axes.vlines(df.index,
+                df['Array_B'] - 0.5 * df['Dev_B'],
+                df['Array_B'] + 0.5 * df['Dev_B'],
+                linestyles='dashed', colors='g', label='Standard Deviation')
+    axes.vlines(df.index + bar_width,
+                df['Array_E'] - 0.5 * df['Dev_E'],
+                df['Array_E'] + 0.5 * df['Dev_E'],
+                linestyles='dashed', colors='b', label='Standard Deviation')
     axes.set_xticks(range(1, 13))
     axes.set_xticklabels((
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
