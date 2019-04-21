@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pathlib
 from scipy.stats import linregress
+from scipy import integrate
 import sqlite3
 import xarray as xr
 
@@ -67,6 +68,12 @@ def _irr_vs_hour(start, stop, output):
     # lod data into df
     df = pd.read_sql_query(sql=query, con=connection, index_col='hour')
     df = df.dropna()
+
+    # compare area under curve:
+    print('AoC integrated by hour:')
+    print(f'Array A: {integrate.trapz(df["Array_A"], df.index)}')
+    print(f'Array B: {integrate.trapz(df["Array_B"], df.index)}')
+    print(f'Array E: {integrate.trapz(df["Array_E"], df.index)}')
 
     fig, axes = plt.subplots()
     opacity = 0.6
@@ -239,7 +246,6 @@ def _irr_correlations(start, stop, output,
 
     # plot figures with trend lines
     for data_var_idx, data_var in enumerate(data_vars):
-        print(f'* Plotting {data_var}')
         plt.cla()
         fig, axes = plt.subplots()
         x = dataset[data_var].values
