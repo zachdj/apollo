@@ -78,8 +78,8 @@ def _irr_vs_hour(start, stop, output):
     line3, = axes.plot(df.index, df['Array_E'],
                        color='b', alpha=opacity, label='Single-axis')
     # plot std error bars
-    axes.vlines(df.index, df['Array_A'] - 0.5 * df['Err_A'], df['Array_A'] + 0.5 * df['Err_A'],
-                linestyles='solid', colors='k', label='Std. Error')
+    # axes.vlines(df.index, df['Array_A'] - 0.5 * df['Err_A'], df['Array_A'] + 0.5 * df['Err_A'],
+    #             linestyles='solid', colors='k', label='Std. Error')
     # axes.vlines(df.index, df['Array_B'] - 0.5 * df['Err_B'], df['Array_B'] + 0.5 * df['Err_B'],
     #             linestyles='dashed', colors='g', label='Std. Error (Array B)')
     # axes.vlines(df.index, df['Array_E'] - 0.5 * df['Err_E'], df['Array_E'] + 0.5 * df['Err_E'],
@@ -140,18 +140,18 @@ def _irr_vs_month(start, stop, output):
                       color='b', alpha=opacity, label='Single-axis')
 
     # plot std error bars
-    axes.vlines(df.index - bar_width,
-                df['Array_A'] - 0.5 * df['Err_A'],
-                df['Array_A'] + 0.5 * df['Err_A'],
-                linestyles='solid', colors='k', label='Std. Error (Array A)')
-    axes.vlines(df.index,
-                df['Array_B'] - 0.5 * df['Err_B'],
-                df['Array_B'] + 0.5 * df['Err_B'],
-                linestyles='solid', colors='k', label=None)
-    axes.vlines(df.index + bar_width,
-                df['Array_E'] - 0.5 * df['Err_E'],
-                df['Array_E'] + 0.5 * df['Err_E'],
-                linestyles='solid', colors='k', label=None)
+    # axes.vlines(df.index - bar_width,
+    #             df['Array_A'] - 0.5 * df['Err_A'],
+    #             df['Array_A'] + 0.5 * df['Err_A'],
+    #             linestyles='solid', colors='k', label='Std. Error (Array A)')
+    # axes.vlines(df.index,
+    #             df['Array_B'] - 0.5 * df['Err_B'],
+    #             df['Array_B'] + 0.5 * df['Err_B'],
+    #             linestyles='solid', colors='k', label=None)
+    # axes.vlines(df.index + bar_width,
+    #             df['Array_E'] - 0.5 * df['Err_E'],
+    #             df['Array_E'] + 0.5 * df['Err_E'],
+    #             linestyles='solid', colors='k', label=None)
     axes.set_xticks(range(1, 13))
     axes.set_xticklabels((
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -311,11 +311,12 @@ def run(first='2017-01-01', last='2018-12-31',
     if figure_set == 'irr' or figure_set == 'all':
         _irr_vs_hour(start=first, stop=last, output=outpath)
         _irr_vs_month(start=first, stop=last, output=outpath)
-        _irr_correlations(start=first, stop=last, output=outpath)
+        # _irr_correlations(start=first, stop=last, output=outpath)
 
     if figure_set == 'heatmaps' or figure_set == 'all':
-        data_availability(start=first, stop=last, output=outpath)
-        nam_heatmap(start=first, output=outpath)
+        # data_availability(start=first, stop=last, output=outpath)
+        # nam_heatmap(start=first, output=outpath)
+        pass
 
 
 if __name__ == '__main__':
