@@ -69,12 +69,6 @@ def _irr_vs_hour(start, stop, output):
     df = pd.read_sql_query(sql=query, con=connection, index_col='hour')
     df = df.dropna()
 
-    # compare area under curve:
-    print('AoC integrated by hour:')
-    print(f'Array A: {integrate.trapz(df["Array_A"], df.index)}')
-    print(f'Array B: {integrate.trapz(df["Array_B"], df.index)}')
-    print(f'Array E: {integrate.trapz(df["Array_E"], df.index)}')
-
     fig, axes = plt.subplots()
     opacity = 0.6
     line1, = axes.plot(df.index, df['Array_A'],
@@ -85,11 +79,11 @@ def _irr_vs_hour(start, stop, output):
                        color='b', alpha=opacity, label='Single-axis')
     # plot std error bars
     axes.vlines(df.index, df['Array_A'] - 0.5 * df['Err_A'], df['Array_A'] + 0.5 * df['Err_A'],
-                linestyles='dashed', colors='r', label='Std. Error (Array A)')
-    axes.vlines(df.index, df['Array_B'] - 0.5 * df['Err_B'], df['Array_B'] + 0.5 * df['Err_B'],
-                linestyles='dashed', colors='g', label='Std. Error (Array B)')
-    axes.vlines(df.index, df['Array_E'] - 0.5 * df['Err_E'], df['Array_E'] + 0.5 * df['Err_E'],
-                linestyles='dashed', colors='b', label='Std. Error (Array E)')
+                linestyles='solid', colors='k', label='Std. Error')
+    # axes.vlines(df.index, df['Array_B'] - 0.5 * df['Err_B'], df['Array_B'] + 0.5 * df['Err_B'],
+    #             linestyles='dashed', colors='g', label='Std. Error (Array B)')
+    # axes.vlines(df.index, df['Array_E'] - 0.5 * df['Err_E'], df['Array_E'] + 0.5 * df['Err_E'],
+    #             linestyles='dashed', colors='b', label='Std. Error (Array E)')
     axes.set_xticks(range(1, 25))
     axes.set_xlabel('Hour (EST)')
     axes.set_ylabel('Mean Irradiance (W / m$^2$)')
@@ -146,18 +140,18 @@ def _irr_vs_month(start, stop, output):
                       color='b', alpha=opacity, label='Single-axis')
 
     # plot std error bars
-    axes.vlines(df.index,
+    axes.vlines(df.index - bar_width,
                 df['Array_A'] - 0.5 * df['Err_A'],
                 df['Array_A'] + 0.5 * df['Err_A'],
-                linestyles='dashed', colors='r', label='Std. Error (Array A)')
+                linestyles='solid', colors='k', label='Std. Error (Array A)')
     axes.vlines(df.index,
                 df['Array_B'] - 0.5 * df['Err_B'],
                 df['Array_B'] + 0.5 * df['Err_B'],
-                linestyles='dashed', colors='g', label='Std. Error (Array B)')
-    axes.vlines(df.index,
+                linestyles='solid', colors='k', label=None)
+    axes.vlines(df.index + bar_width,
                 df['Array_E'] - 0.5 * df['Err_E'],
                 df['Array_E'] + 0.5 * df['Err_E'],
-                linestyles='dashed', colors='b', label='Std. Error (Array E)')
+                linestyles='solid', colors='k', label=None)
     axes.set_xticks(range(1, 13))
     axes.set_xticklabels((
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
