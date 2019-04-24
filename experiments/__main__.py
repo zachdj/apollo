@@ -10,7 +10,7 @@ from experiments.comparison_fast import run as run_comparison_fast
 from experiments.figures import run as generate_figures
 from experiments.grid_expansion import run as run_grid_expansion
 from experiments.grid_expansion_fast import run as run_grid_fast
-
+from experiments.svm_grid_search import run as run_svm_search
 
 def setup_logging(
     default_path='logging.json',
@@ -62,6 +62,7 @@ EXPERIMENTS = {
     'figures': generate_figures,
     'grid': run_grid_expansion,
     'grid_fast': run_grid_fast,
+    'svm_grid_search': run_svm_search,
 }
 
 
