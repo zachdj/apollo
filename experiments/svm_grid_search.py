@@ -35,4 +35,4 @@ def run(first='2017-01-01', last='2018-12-31'):
 
 
 if __name__ == '__main__':
-    main()
+    run()
