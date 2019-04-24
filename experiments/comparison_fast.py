@@ -28,10 +28,10 @@ _default_metrics = (mae, mse, rmse, r2)
 MODELS = {
     'Linear Regression': LinearRegression(),
     'Support Vector Regression': scikit_SVR(**{
-        'C': 1000,
+        'C': 1500,
         'epsilon': 2.0,
         'kernel': 'rbf',
-        'gamma': 0.0001
+        'gamma': 0.00005
     }),
     # 'KNN': KNeighborsRegressor(**{
     #     'n_neighbors': 5,
