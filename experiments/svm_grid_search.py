@@ -1,5 +1,5 @@
 ''' More thorough grid search over SVM parameters '''
-
+import numpy as np
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV
 
@@ -12,8 +12,8 @@ coarse_param_grid = [
 
 narrow_param_grid = [
     {
-        'C': [800, 1000, 1500, 10000],
-        'gamma': [0.00005, 0.0001, 0.0003, 0.0005, 0.0007],
+        'C': np.arange(1000, 3000, 200),
+        'gamma': np.arange(1e-5, 1e-4, 1e-5),
         'kernel': ['rbf']
     },
 ]
@@ -30,7 +30,7 @@ def run(first='2017-01-01', last='2018-12-31'):
         error_score=-10000
     )
 
-    dataset = SolarDataset(target='UGAEPOA1IRR', target_hours=24,
+    dataset = SolarDataset(target='UGABPOA1IRR', target_hours=24,
                            start=first, stop=last)
     x, y = dataset.tabular()
     grid_search.fit(x, y)
