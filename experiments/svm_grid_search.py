@@ -10,11 +10,19 @@ coarse_param_grid = [
     {'C': [1, 10, 100, 1000], 'gamma': [0.01, 0.001, 0.0001], 'kernel': ['rbf']},
 ]
 
+narrow_param_grid = [
+    {
+        'C': [800, 1000, 1500, 10000],
+        'gamma': [0.00005, 0.0001, 0.0003, 0.0005, 0.0007],
+        'kernel': ['rbf']
+    },
+]
+
 
 def run(first='2017-01-01', last='2018-12-31'):
     grid_search = GridSearchCV(
         estimator=SVR(),
-        param_grid=coarse_param_grid,
+        param_grid=narrow_param_grid,
         scoring='neg_mean_absolute_error',
         n_jobs=-1,
         pre_dispatch=16,
