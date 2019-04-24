@@ -28,40 +28,40 @@ _default_metrics = (mae, mse, rmse, r2)
 MODELS = {
     'Linear Regression': LinearRegression(),
     'Support Vector Regression': scikit_SVR(**{
-        'C': 1.4,
-        'epsilon': 0.6,
+        'C': 1000,
+        'epsilon': 2.0,
         'kernel': 'rbf',
-        'gamma': 0.001
+        'gamma': 0.0001
     }),
-    'KNN': KNeighborsRegressor(**{
-        'n_neighbors': 5,
-        'weights': 'distance',
-    }),
-    'MLP': MLPRegressor(
-            hidden_layer_sizes=(57, 23),
-            activation='relu',
-            solver='adam',
-            batch_size=100,
-            learning_rate_init=0.003,
-            momentum=0.2,
-            max_iter=500,
-            random_state=123,
-    ),
-    'Model Tree': DecisionTreeRegressor(**{
-        'splitter': 'best',
-        'max_depth': 20,
-        'min_impurity_decrease': 0.25
-    }),
-    'Random Forest': RandomForestRegressor(**{
-        'n_estimators': 100,
-        'max_depth': 50,
-        'min_impurity_decrease': 0.30
-    }),
-    'GBT': XGBRegressor(**{
-        'learning_rate': 0.05,
-        'n_estimators': 200,
-        'max_depth': 5,
-    })
+    # 'KNN': KNeighborsRegressor(**{
+    #     'n_neighbors': 5,
+    #     'weights': 'distance',
+    # }),
+    # 'MLP': MLPRegressor(
+    #         hidden_layer_sizes=(57, 23),
+    #         activation='relu',
+    #         solver='adam',
+    #         batch_size=100,
+    #         learning_rate_init=0.003,
+    #         momentum=0.2,
+    #         max_iter=500,
+    #         random_state=123,
+    # ),
+    # 'Model Tree': DecisionTreeRegressor(**{
+    #     'splitter': 'best',
+    #     'max_depth': 20,
+    #     'min_impurity_decrease': 0.25
+    # }),
+    # 'Random Forest': RandomForestRegressor(**{
+    #     'n_estimators': 100,
+    #     'max_depth': 50,
+    #     'min_impurity_decrease': 0.30
+    # }),
+    # 'GBT': XGBRegressor(**{
+    #     'learning_rate': 0.05,
+    #     'n_estimators': 200,
+    #     'max_depth': 5,
+    # })
 }
 
 
