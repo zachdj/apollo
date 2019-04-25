@@ -67,7 +67,7 @@ EXPERIMENTS = {
 
 
 def main():
-    setup_logging()
+    # setup_logging()
     parser = argparse.ArgumentParser(
         description='Apollo Experiment Runner',
         argument_default=argparse.SUPPRESS,
