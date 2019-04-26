@@ -55,12 +55,10 @@ def parse_kwarg_list(kwarg_list):
 
 EXPERIMENTS = {
     'test': lambda: print('Ran test'),
-    'comparison': run_comparison,
     'comparison_fast': run_comparison_fast,
     'figures': generate_figures,
-    'grid': run_grid_expansion,
     'grid_fast': run_grid_fast,
-    'svm_grid_search': run_svm_search,
+    'grid_search': run_grid_search,
 }
 
 
